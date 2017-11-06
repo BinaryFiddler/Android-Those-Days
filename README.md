@@ -6,6 +6,6 @@
 * The main screen renders all the activities of the user as a list of items
 
 
-![Date picker](https://drive.google.com/open?id=0B8TEhL4XasuybTZFX2tLX25ZcW)
+![Date picker](README/datePicker.png)
 
-![Activities rendered as list](https://drive.google.com/file/d/0B8TEhL4XasuyRnowa2lmSllNdDA/view?usp=sharing)
+![Activities rendered as list](README/activityList.png)
