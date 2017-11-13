@@ -19,6 +19,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
     private List<HumanActivity> queue;
     private Context adapterContext;
 
+
     /***** Creating OnItemClickListener *****/
 
     // Define listener member variable
@@ -68,7 +69,13 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         View humanActivityView = inflater.inflate(R.layout.human_activity_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(humanActivityView);
+        final ViewHolder viewHolder = new ViewHolder(humanActivityView);
+        humanActivityView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, viewHolder.getPosition());
+            }
+        });
         return viewHolder;
     }
 
@@ -87,5 +94,9 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
     @Override
     public int getItemCount() {
         return queue.size();
+    }
+
+    public List<HumanActivity> getQueue() {
+        return queue;
     }
 }
