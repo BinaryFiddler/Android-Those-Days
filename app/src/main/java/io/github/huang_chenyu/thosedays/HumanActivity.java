@@ -10,17 +10,24 @@ import java.util.List;
 
 public class HumanActivity {
     private String activityName;
-    private String duration;
     private String location;
     private List<String> tags;
 
+    private String endTime;
+    private String startTime;
+    private String lat;
+    private String lon;
+
     public HumanActivity(){
         activityName = "running";
-        duration = "10:03 - 13:12";
+        endTime = "10:03";
+        startTime = "13:12";
         location = "La Jolla";
         tags = new LinkedList<>();
         tags.add("Running");
         tags.add("Fun");
+        lat = "32.881154";
+        lon = "-117.235564";
     }
     public static ArrayList<HumanActivity> createActivitiesList(int numContacts) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();
@@ -36,15 +43,25 @@ public class HumanActivity {
         return activityName;
     }
 
-    public String getDuration() {
-        return duration;
-    }
+    public String getDuration() {return (startTime + " - " + endTime);}
+
+
 
     public List<String> getTags() {
         return tags;
     }
 
     public String getLocation() {
+
+        //TODO remove location, return getPlace(lat, lon) via Google APIs
         return location;
     }
+
+    public String getEndTime() {return endTime;}
+
+    public String getStartTime() {return startTime;}
+
+    public String getLat() {return lat;}
+
+    public String getLon() {return lon;}
 }
