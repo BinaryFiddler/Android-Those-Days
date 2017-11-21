@@ -5,11 +5,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
+
+import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
 
 /**
@@ -24,7 +29,6 @@ public class ActivityFragment extends Fragment {
     public ActivityFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +49,14 @@ public class ActivityFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(humanActivityListAdapter);
 
+
+        humanActivityListAdapter.setOnItemClickListener(new HumanActivityListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                HumanActivity activity = humanActivityListAdapter.getQueue().get(position);
+                EventBus.getDefault().post(new StartDetailActivityEvent(activity));
+            }
+        });
 
         return rootView;
     }

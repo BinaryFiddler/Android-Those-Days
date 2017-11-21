@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
+import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "[Using ESA]";
@@ -35,8 +40,31 @@ public class MainActivity extends AppCompatActivity {
            System.out.println(users.get(i) + " !!");
         }
 
-        getSupportFragmentManager().beginTransaction().add(R.id.menu, new MenuFragment()).add(R.id.content, new ActivityFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(StartDetailActivityEvent event){
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new HumanActivityDetailFragment(event.activity)).commit();
+    }
+
+    @Subscribe
+    public void onEvent(ShutDownDetailActivityEvent event){
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ActivityFragment()).commit();
     }
 
     private static final String SERVER_PREDICTIONS_FILE_SUFFIX = ".server_predictions.json";
