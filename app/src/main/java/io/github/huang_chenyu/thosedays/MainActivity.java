@@ -29,20 +29,53 @@ import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "[Using ESA]";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        Should be "files" rather than "users".
         List<String> users = getLabelFiles();
+
         System.out.printf("=== %d\n", users.size());
         for (int i = 0; i < users.size(); i++) {
-           System.out.println(users.get(i) + " !!");
+            System.out.println(users.get(i) + " !!");
         }
 
+//      There should be a attribute for this app recording the timestamp of the file it processed last time
+
+//      Maybe need to sort or not -> check which files are not processed yet -> Dump the unprocessed ones into "dataProcess".
+//      -> Dumping the processed data into database may happen within the function '"ataProcess".
+//        if (blah blah) {
+            dataProcess(users);
+//      }
+
+//        Read data from database and render the screen of the app.
+
         getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
+    }
+
+    private void dataProcess(List<String> users) {
+        Log.d("MKTEST", "Data Process");
+        Log.d("MKTEST", String.valueOf(users.size()));
+        for ( int i = 0; i < users.size(); i++ ) {
+
+            Log.d("MKTEST", users.get(i).toString());
+
+//            retrieve the activity, location with the highest probability and the longitude and latitude ( should be a function).
+
+//            TO-DO: Implement the que
+//            Push into the que
+//            Decide the most possible activity and location at this moment
+        }
+    }
+
+    private void readESALabelsFileForMinute(String uuidPrefix, String fileName, boolean serverOfUser) {
 
     }
+
+
 
     @Override
     protected void onResume() {
@@ -72,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String UUID_DIR_PREFIX = "extrasensory.labels.";
 
     private File getUsersFilesDirectory() throws PackageManager.NameNotFoundException {
+
         // Locate the ESA saved files directory, and the specific minute-example's file:
         Context extraSensoryAppContext = getApplicationContext().createPackageContext("edu.ucsd.calab.extrasensory", 0);
         File esaFilesDir = extraSensoryAppContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
