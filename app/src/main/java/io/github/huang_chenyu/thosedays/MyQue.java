@@ -1,8 +1,12 @@
 package io.github.huang_chenyu.thosedays;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+
+import android.util.Log;
 
 /**
  * Created by mickie on 11/25/17.
@@ -39,13 +43,15 @@ public class MyQue<E> extends LinkedList<E> {
         return this.counter.findMostCommon();
     }
 
+    @Override
     public E peek() {
-        return super.peek();
+        return super.peekLast();
     }
+
 
     public void printAll() {
         for (int i = 0; i < this.size(); i++) {
-            System.out.println(this.get(i));
+           Log.d("MyQue", this.get(i).toString());
         }
     }
 
@@ -54,7 +60,8 @@ public class MyQue<E> extends LinkedList<E> {
 
 class Counter<E> {
 
-    final HashMap<E, Integer> counts = new HashMap<>();
+    final HashMap<E, Integer> counts = new LinkedHashMap<>();
+
 
     protected boolean add(E item) {
 
