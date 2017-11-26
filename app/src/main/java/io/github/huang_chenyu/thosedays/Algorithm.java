@@ -32,14 +32,36 @@ public class Algorithm {
     private static final String EXTRASENSORY_PKG_NAME = "edu.ucsd.calab.extrasensory";
 
     public static void process(Context context) {
-        try {
-            File esaFilesDir = getUsersFilesDirectory(context);
-            List<String> files = getLabelFiles(esaFilesDir);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        MyQue<String> act = new MyQue<>(3);
+        act.append("Mickie");
+        act.printAll();
+        Log.d("MKTEST", act.findMax());
+
+        act.append("Mickie");
+        act.printAll();
+        Log.d("MKTEST", act.findMax());
+
+        act.append("Jackie");
+        act.printAll();
+        Log.d("MKTEST", act.findMax());
+
+        act.append("Jackie");
+        act.printAll();
+        Log.d("MKTEST", act.findMax());
+
+        act.append("Jackie");
+        act.printAll();
+        Log.d("MKTEST", act.findMax());
+        //        try {
+//            File esaFilesDir = getUsersFilesDirectory(context);
+//            List<String> files = getLabelFiles(esaFilesDir);
+//
+//
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return;
+//        }
     }
 
     private static List<String> getLabelFiles(File filesDir) throws IOException, JSONException{
