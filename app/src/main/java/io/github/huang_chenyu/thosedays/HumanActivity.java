@@ -1,8 +1,12 @@
 package io.github.huang_chenyu.thosedays;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by chenyu on 11/5/17.
@@ -11,24 +15,42 @@ import java.util.List;
 public class HumanActivity {
     private String activityName;
     private String location;
-    private List<String> tags;
-
+    private Set<String> tags;
+    private String date;
     private String endTime;
     private String startTime;
     private String lat;
     private String lon;
 
+
+
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
+
+        this.activityName = activityName;
+        this.tags = tags;
+        this.date = date;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.lat = lat;
+        this.lon = lon;
+    }
+
     public HumanActivity(){
         activityName = "running";
+        date = "12/1/2017";
         endTime = "10:03";
         startTime = "13:12";
         location = "La Jolla";
-        tags = new LinkedList<>();
+        tags = new HashSet<>();
         tags.add("Running");
         tags.add("Fun");
         lat = "32.881154";
         lon = "-117.235564";
     }
+
+
+
+
     public static ArrayList<HumanActivity> createActivitiesList(int numContacts) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();
 
@@ -47,7 +69,7 @@ public class HumanActivity {
 
 
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
@@ -64,4 +86,17 @@ public class HumanActivity {
     public String getLat() {return lat;}
 
     public String getLon() {return lon;}
+
+    public String getDate() {return date;}
+
+    public void printAll() {
+        Log.d("HumanActivity", getDate());
+        Log.d("HumanActivity", getActivityName() + ", " + getStartTime() + " - " + getEndTime());
+        Log.d("HumanActivity", getLat() + ", " + getLon());
+
+        for( String str : tags){
+            Log.d("HumanActivity - Tags", str);
+        }
+    }
+
 }

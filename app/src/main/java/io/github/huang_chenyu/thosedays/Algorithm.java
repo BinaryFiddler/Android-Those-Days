@@ -15,9 +15,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * Created by Chiao on 2017/11/25.
@@ -60,16 +66,27 @@ public class Algorithm {
 
     public static void process(Context context) {
 
-
         try {
 
             ESAFilesDir = getUsersFilesDirectory(context);
 
             List<JSONObject> files = getLabelFiles(ESAFilesDir);
 
+
             List<String> schedule = raw2schedule(files);
 
+            // Activities, # of TIME_INTERVAL
             List<Pair<String, Integer>> rleSchedule = runLength(schedule);
+
+            // Convert RLE activities to list of human activities.
+            List<HumanActivity> activities = acts2HumnActs(rleSchedule, files);
+
+            // TEST CODES, USED TO VALIDATE HUMAN ACTIVITIES.
+            for(int i = 0; i < 20; i++ ) {
+                activities.get(i).printAll();
+            }
+
+            // Dump data (List of Human activities) to DB.
 
         }
 
@@ -79,6 +96,92 @@ public class Algorithm {
         }
     }
 
+    private static List<HumanActivity> acts2HumnActs (List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
+
+        // Fetch timestamps.
+        List<Integer> timestamps = new ArrayList<>();
+        for ( int i = 0; i < files.size(); i++ ) {
+            timestamps.add(files.get(i).getInt("timestamp"));
+        }
+
+        long curTime = timestamps.get(0);
+
+        int idx = 0;
+
+        List<HumanActivity> res = new ArrayList<>();
+
+        for (int i = 0; i < rleAct.size(); i++ ) {
+
+            // Get activity name
+            String actName = rleAct.get(i).first;
+
+            // Get Time
+            int durMin = rleAct.get(i).second;
+            long startTime = curTime;
+            long endTime = startTime + durMin * 60;
+
+            //Process from epoch time to date format.
+            Date date = new Date(startTime*1000);
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            timeFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+            dateFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+            // Get date string and startTime string.
+            String dateStr = dateFormat.format(date);
+            String startTimeStr = timeFormat.format(date);
+
+            // Get endTime String.
+            date = new Date(endTime * 1000);
+            String endTimeStr = timeFormat.format(date);
+
+            // Get lat and lon
+            String lat = "null", lon = "null";
+
+            try {
+                JSONArray locCoor = files.get(i).getJSONArray("location_lat_long");
+
+                if (!(locCoor == null || locCoor.length() != 2)) {
+                    lat = String.valueOf(locCoor.getDouble(0));
+                    lon = String.valueOf(locCoor.getDouble(1));
+                }
+            } catch (JSONException e) {
+                lat = "null";
+                lon = "null";
+            }
+
+
+            // Get tags of locations.
+            Set<String> tags = new HashSet<>();
+
+            while ( idx < timestamps.size() && timestamps.get(idx) < endTime) {
+
+                // Read from files.
+                List<Double> probs = new ArrayList<>();
+                JSONArray probArray = files.get(idx).getJSONArray("label_probs");
+                for (int j = 0; j < probArray.length(); j++) {
+                    probs.add(probArray.getDouble(j));
+                }
+
+                // Get the location which has the highest prob
+                String maxLoc = label2Act[findMaxLoc(probs)];
+
+                tags.add(maxLoc);
+
+                idx += 1;
+
+            }
+
+            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon);
+            res.add(event);
+
+            // Update curTime
+            curTime  = endTime;
+        }
+
+        return res;
+
+    }
 
     /**
      * Read files and determine the activity of each time interval.
@@ -151,8 +254,8 @@ public class Algorithm {
      */
     private static int findMaxAct(List<Double> probs) {
 
-        int maxAct = -1;
-        double maxProb = -1;
+        int maxAct = 0;
+        double maxProb = 0;
 
         for( int i = 0; i < probs.size(); i++ ) {
             if(catOfAct[i] == 3){
@@ -171,6 +274,33 @@ public class Algorithm {
         return maxAct;
     }
 
+    // TODO should be combined with findMaxAct function.
+    /**
+     * Return the location with the highest probability.
+     * @param probs: Probabilities of all the labels.
+     * @return int: Index of the location with the highest prob.
+     */
+    private static int findMaxLoc(List<Double> probs) {
+
+        int maxLoc = 7;
+        double maxProb = 0;
+
+        for( int i = 0; i < probs.size(); i++ ) {
+            if(catOfAct[i] == 3){
+                // These are activities.
+
+            } else if (catOfAct[i] == 2) {
+                // Labels about locations.
+                if( probs.get(i) - maxProb > 0 ) {
+                    maxLoc = i;
+                    maxProb = probs.get(i);
+                }
+            } else {
+                // Labels we don't need.
+            }
+        }
+        return maxLoc;
+    }
 
     private static List<Pair<String, Integer>> runLength (List<String> acts) {
 
