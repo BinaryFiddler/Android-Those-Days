@@ -8,17 +8,15 @@ import org.greenrobot.eventbus.Subscribe;
 
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
+import io.github.huang_chenyu.thosedays.Algorithm;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        Algorithm.process(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
-
     }
 
     @Override
