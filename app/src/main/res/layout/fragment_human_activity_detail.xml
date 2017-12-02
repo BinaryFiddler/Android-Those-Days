@@ -13,7 +13,7 @@
         <ImageView
             android:id="@+id/activity_image"
             android:src="@drawable/running"
-            android:layout_marginLeft="10dp"
+            android:layout_margin="10dp"
             android:layout_width="100dp"
             android:layout_height="100dp" />
 
