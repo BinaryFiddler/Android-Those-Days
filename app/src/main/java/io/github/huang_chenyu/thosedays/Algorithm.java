@@ -64,7 +64,7 @@ public class Algorithm {
 
     private static File ESAFilesDir;
 
-    public static void process(Context context) {
+    public static List<HumanActivity> process(Context context) {
 
         try {
 
@@ -86,13 +86,14 @@ public class Algorithm {
                 activities.get(i).printAll();
             }
 
+            return activities;
             // Dump data (List of Human activities) to DB.
 
         }
 
         catch (Exception e) {
             e.printStackTrace();
-            return;
+            return null;
         }
     }
 

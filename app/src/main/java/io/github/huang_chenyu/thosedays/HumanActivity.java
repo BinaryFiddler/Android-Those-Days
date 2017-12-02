@@ -4,8 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,7 +23,6 @@ public class HumanActivity {
 
 
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
-
         this.activityName = activityName;
         this.tags = tags;
         this.date = date;
@@ -51,10 +48,10 @@ public class HumanActivity {
 
 
 
-    public static ArrayList<HumanActivity> createActivitiesList(int numContacts) {
+    public static ArrayList<HumanActivity> createActivitiesList(int num) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();
 
-        for (int i = 1; i <= numContacts; i++) {
+        for (int i = 1; i <= num; i++) {
             activities.add(new HumanActivity());
         }
 
