@@ -70,7 +70,6 @@ public class HumanActivityDetailFragment extends Fragment {
 
         setButtonListeners();
 
-
         return rootView;
     }
 

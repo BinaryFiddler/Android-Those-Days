@@ -140,6 +140,8 @@ public class Database2 {
 
     List<HumanActivity> queryByDate(String date){
 
+        Log.d("Database", date);
+
         List<HumanActivity> res = new LinkedList<>();
 
         String query = "SELECT * from " + TABLE_COMMENT+
