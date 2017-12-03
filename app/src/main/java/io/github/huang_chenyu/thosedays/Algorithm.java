@@ -64,7 +64,7 @@ public class Algorithm {
 
     private static File ESAFilesDir;
 
-    public static List<HumanActivity> process(Context context) {
+    public static void process(Context context) {
 
         try {
 
@@ -82,19 +82,60 @@ public class Algorithm {
             List<HumanActivity> activities = acts2HumnActs(rleSchedule, files);
 
             // TEST CODES, USED TO VALIDATE HUMAN ACTIVITIES.
-            for(int i = 0; i < 20; i++ ) {
-                activities.get(i).printAll();
+//            for(int i = 30; i < 50; i++ ) {
+//                activities.get(i).printAll();
+//            }
+
+            //TODO: This line maybe removed when we only read new files, but not all.
+            // For now, we're reading old data again and again, which makes DB grows badly.
+            // Only used for testing in a brand new environment
+            deleteTable(context);
+
+            // Dump data (List of Human activities) to DB.
+            if(!writeToDB(context, activities)){
+                throw new RuntimeException("Cannot write new data into DB.");
             }
 
-            return activities;
-            // Dump data (List of Human activities) to DB.
+            // Used for testing updating comments.
+//            updateCommentTest(context, activities.get(0));
 
-        }
 
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+    }
+
+    private static void updateCommentTest(Context context, HumanActivity act) {
+
+        Database2 db = new Database2();
+        db.openDB(context);
+
+        // Change the comment
+        act.setComments("Oh!,  Mickie you're so fun");
+        db.updateComment(act);
+
+        db.closeDB();
+    }
+
+    private static void deleteTable(Context context) {
+        Database2 db = new Database2();
+        db.openDB(context);
+        db.delete();
+        db.closeDB();
+    }
+
+    private static boolean writeToDB(Context context, List<HumanActivity> acts) {
+
+        Database2 db = new Database2();
+        db.openDB(context);
+
+        for(int i = 0; i < acts.size(); i++) {
+            db.addEntries(acts.get(i));
+        }
+
+        db.closeDB();
+
+        return true;
     }
 
     private static List<HumanActivity> acts2HumnActs (List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
@@ -384,14 +425,5 @@ public class Algorithm {
             return userEsaFilesDir;
         }
     }
-
-//      There should be a attribute for this app recording the timestamp of the file it processed last time
-
-    //      Maybe need to sort or not -> check which files are not processed yet -> Dump the unprocessed ones into "dataProcess".
-//      -> Dumping the processed data into database may happen within the function '"ataProcess".
-//        if (blah blah) {
-//      }
-
-//        Read data from database and render the screen of the app.
 
 }

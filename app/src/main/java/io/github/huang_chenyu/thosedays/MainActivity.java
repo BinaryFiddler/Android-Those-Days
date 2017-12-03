@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         READ_EXT_STORAGE);
             }
         }
-
+        Algorithm.process(getApplicationContext());
         getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
     }
 

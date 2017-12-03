@@ -1,15 +1,16 @@
 package io.github.huang_chenyu.thosedays;
 
-import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -19,21 +20,24 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Database2 {
     SQLiteDatabase db;
-    public static final String TABLE_COMMENT = "activityList";
-    public static final String COLUMN_ID = "ID";
-    public static final String COLUMN_DATE = "Date";
-    public static final String COLUMN_START_TIME = "Start Time";
-    public static final String COLUMN_END_TIME = "End Time";
-    public static final String COLUMN_LAT = "Latitude";
-    public static final String COLUMN_LON = "Longtitude";
-    public static final String COLUMN_TAG = "Tags";
-    public static final String COLUMN_LOC = "Location";
-    public static final String COLUMN_COMMENT = "Comment";
-    public static final String COLUMN_PHOTO = "Photos";
+    private static final String DATABASE_NAME = "Activities";
+    private static final String TABLE_COMMENT = "activityList";
+    private static final String COLUMN_ID = "ID";
+    private static final String COLUMN_ACT_NAME = "Name";
+    private static final String COLUMN_DATE = "Date";
+    private static final String COLUMN_START_TIME = "Start_Time";
+    private static final String COLUMN_END_TIME = "End_Time";
+    private static final String COLUMN_LAT = "Latitude";
+    private static final String COLUMN_LON = "Longitude";
+    private static final String COLUMN_TAG = "Tags";
+    private static final String COLUMN_LOC = "Location";
+    private static final String COLUMN_COMMENT = "Comment";
+    private static final String COLUMN_PHOTO = "Photos";
 
     private static final String DATABASE_CREATE = "create table IF NOT EXISTS "
             + TABLE_COMMENT + "( "
             + COLUMN_ID + " integer primary key, "
+            + COLUMN_ACT_NAME + " varchar, "
             + COLUMN_DATE + " date, "
             + COLUMN_START_TIME + " varchar, "
             + COLUMN_END_TIME + " varchar, "
@@ -69,9 +73,9 @@ public class Database2 {
 //    }
 
 
-    void openDB(Activity activity){
+    void openDB(Context context){
 
-        db = activity.openOrCreateDatabase("Activities", MODE_PRIVATE, null);
+        db = context.openOrCreateDatabase(DATABASE_NAME, MODE_PRIVATE, null);
 //      check if table exists
         Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+TABLE_COMMENT+"'", null);
         if(cursor!=null) {
@@ -89,27 +93,119 @@ public class Database2 {
     //todo implement
     void addEntries(HumanActivity humanActivity){
 
+        ContentValues values = new ContentValues();
+
+        // Now the ID is not necessary
+//        values.put(COLUMN_ID, "0");
+
+        values.put(COLUMN_ACT_NAME, humanActivity.getActivityName());
+        values.put(COLUMN_DATE, humanActivity.getDate());
+        values.put(COLUMN_START_TIME, humanActivity.getStartTime());
+        values.put(COLUMN_END_TIME, humanActivity.getEndTime());
+        values.put(COLUMN_LAT, humanActivity.getLat());
+        values.put(COLUMN_LON, humanActivity.getLon());
+
+
+        // Tags need to be pre-processed before dumping into db.
+        StringBuilder tagsStr = new StringBuilder();
+
+        for(String tag : humanActivity.getTags()) {
+
+            if ( tagsStr.length() != 0 ) {
+                tagsStr.append(",");
+            }
+
+            tagsStr.append(tag);
+        }
+        values.put(COLUMN_TAG, tagsStr.toString());
+
+
+        values.put(COLUMN_LOC, humanActivity.getLocation());
+        values.put(COLUMN_COMMENT, humanActivity.getComments());
+
+        // There may be multiple photos, thus, need to pre-processed
+        StringBuilder photoPaths = new StringBuilder();
+        for(String path : humanActivity.getPhotoPaths()) {
+
+            if ( tagsStr.length() != 0)
+                photoPaths.append(",");
+
+            photoPaths.append(path);
+        }
+
+        values.put(COLUMN_PHOTO, photoPaths.toString());
+
+        db.insertWithOnConflict(TABLE_COMMENT, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    //todo implement
     List<HumanActivity> queryByDate(String date){
-//        List<HumanActivity> activities = new LinkedList<>();
 
-        List<HumanActivity> activities = HumanActivity.createActivitiesList(10);
+        List<HumanActivity> res = new LinkedList<>();
 
-        return activities;
+        String query = "SELECT * from " + TABLE_COMMENT+
+                        " WHERE " + COLUMN_DATE + "= '" + date + "';";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        while(cursor.moveToNext()){
+
+            String actName = cursor.getString(cursor.getColumnIndex(COLUMN_ACT_NAME));
+            String loc = cursor.getString(cursor.getColumnIndex(COLUMN_LOC));
+            String startTime = cursor.getString(cursor.getColumnIndex(COLUMN_START_TIME));
+            String endTime = cursor.getString(cursor.getColumnIndex(COLUMN_END_TIME));
+            String lat = cursor.getString(cursor.getColumnIndex(COLUMN_LAT));
+            String lon = cursor.getString(cursor.getColumnIndex(COLUMN_LON));
+            String com = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
+            // Retrieve tags
+            Set<String> tags = new HashSet<>(Arrays.asList(cursor.getString(cursor.getColumnIndex(COLUMN_TAG)).split("\\s*,\\s*")));
+
+            // Retrieve photo paths
+            Set<String> photoPaths = new HashSet<>(Arrays.asList(cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO)).split("\\s*,\\s*")));
+
+            // Create a HumanActivity
+            HumanActivity tmp = new HumanActivity(actName, tags, date, endTime, startTime, lat, lon, loc, com, photoPaths);
+            // Append to res
+            res.add(tmp);
+
+        }
+        cursor.close();
+        return res;
     }
 
-    //todo implement
     void updateComment(HumanActivity activity){
+        String date = activity.getDate();
+        String startTime = activity.getStartTime();
+        String comment = activity.getComments();
 
+        // Handling ' symbol
+        comment = comment.replace("'", "''");
+
+        String updateCmd = "UPDATE " + TABLE_COMMENT + " " +
+                           "SET " + COLUMN_COMMENT + "='" + comment +"' " +
+                            "WHERE " + COLUMN_DATE + "= '" + date + "' and " + COLUMN_START_TIME + "='" + startTime +"';";
+
+        db.execSQL(updateCmd);
+
+        //Codes for debugging and testing.
+        String query = "SELECT * from " + TABLE_COMMENT+
+                " WHERE " + COLUMN_DATE + "= '" + date + "' and " + COLUMN_START_TIME + "='" + startTime +"';";
+        Cursor cursor = db.rawQuery(query, null);
+        while(cursor.moveToNext()) {
+            String newComment = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
+            Log.d("Updated Comment", newComment);
+        }
     }
 
     void closeDB(){
         db.close();
     }
 
-//    public List<String> searchForPotentialMatch(String searchText) {
+    // Delete the table from database.
+    void delete() {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENT);
+    }
+
+//    private List<String> searchForPotentialMatch(String searchText) {
 //        List<String> res = new ArrayList<>();
 //        if (searchText.length() == 0)
 //            return res;

@@ -47,7 +47,10 @@ public class ActivityFragment extends Fragment {
 
 //        ArrayList<HumanActivity> activities = HumanActivity.createActivitiesList(10);
 
-        String date = "2017-12-2";
+//        String date = "2017-12-2";
+
+        // Below is the right format for DB queries.
+        String date = "10/12/2017";
         getAndRenderListOfActivities(date);
 
 //        List<HumanActivity> activities = db.queryByDate(date);
