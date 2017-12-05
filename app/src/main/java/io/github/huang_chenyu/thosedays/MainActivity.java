@@ -14,6 +14,9 @@ import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 public class MainActivity extends AppCompatActivity {
 
     final static int READ_EXT_STORAGE = 1;
+    private ActivityFragment activityFragment;
+    private Database2 db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,14 @@ public class MainActivity extends AppCompatActivity {
                         READ_EXT_STORAGE);
             }
         }
+        db = new Database2();
+        db.openDB(this);
         Algorithm.process(getApplicationContext());
-        getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
+        if (activityFragment == null){
+            activityFragment = new ActivityFragment();
+            activityFragment.setDb(db);
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, activityFragment).commit();
     }
 
     @Override
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        db.closeDB();
     }
 
     @Subscribe
@@ -59,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(ShutDownDetailActivityEvent event){
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new ActivityFragment()).commit();
+        if (event.humanActivity != null){
+            db.updateComment(event.humanActivity);
+        }
+        if (activityFragment == null){
+            activityFragment = new ActivityFragment();
+            activityFragment.setDb(db);
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
     }
 }

@@ -39,8 +39,7 @@ public class ActivityFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_activity, container, false);
 
-        db = new Database2();
-        db.openDB(getActivity());
+//        db.openDB(getActivity());
 
         recyclerView = rootView.findViewById(R.id.activity_list);
 
@@ -127,7 +126,6 @@ public class ActivityFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        db.closeDB();
         EventBus.getDefault().unregister(this);
     }
 
@@ -135,5 +133,9 @@ public class ActivityFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    public void setDb(Database2 db) {
+        this.db = db;
     }
 }

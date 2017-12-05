@@ -20,7 +20,6 @@ public class HumanActivityDetailFragment extends Fragment {
 
     HumanActivity activity;
 
-
     ImageView imageView;
     TextView activityName;
     TextView activityTime;
@@ -78,7 +77,9 @@ public class HumanActivityDetailFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ShutDownDetailActivityEvent());
+                String newComment = comment.getText().toString();
+                activity.setComments(newComment);
+                EventBus.getDefault().post(new ShutDownDetailActivityEvent(activity));
             }
         });
 
