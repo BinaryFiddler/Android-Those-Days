@@ -6,8 +6,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.Date;
+
+import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        db.closeDB();
+//        db.closeDB();
     }
 
     @Subscribe
@@ -69,13 +75,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(ShutDownDetailActivityEvent event){
-        if (event.humanActivity != null){
+        Log.d("chenyu", "cancel?");
+        if (event.humanActivity.getComments() != null){
             db.updateComment(event.humanActivity);
         }
-        if (activityFragment == null){
+//        if (activityFragment == null){
             activityFragment = new ActivityFragment();
             activityFragment.setDb(db);
-        }
+//        }
+
+        Date date = new Date();
+        int month = Integer.parseInt(event.humanActivity.getDate().substring(0, 2));
+        int day = Integer.parseInt(event.humanActivity.getDate().substring(3, 5));
+        int year = Integer.parseInt(event.humanActivity.getDate().substring(6));
+        date.setYear(year);
+        date.setMonth(month - 1);
+        date.setDate(day);
+        EventBus.getDefault().postSticky(new DateChangedEvent(date));
+
         getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
+//        mm/dd/yyyy
+
     }
 }

@@ -61,7 +61,7 @@ public class MenuFragment extends Fragment {
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 String newTime = year + "/" + (monthOfYear + 1) + "/" + dayOfMonth;
                 pickDateButton.setText(newTime);
-                EventBus.getDefault().post(new DateChangedEvent(new Date(year, monthOfYear, dayOfMonth)));
+                EventBus.getDefault().postSticky(new DateChangedEvent(new Date(year, monthOfYear, dayOfMonth)));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 

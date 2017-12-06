@@ -86,7 +86,7 @@ public class HumanActivityDetailFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ShutDownDetailActivityEvent());
+                EventBus.getDefault().post(new ShutDownDetailActivityEvent(activity));
             }
         });
 
@@ -98,11 +98,15 @@ public class HumanActivityDetailFragment extends Fragment {
         activityTime.setText(activity.getDuration());
 
         activityLocation.setText(activity.getLocation());
+        comment.setText(activity.getComments());
 
         for (String t:activity.getTags()){
-            TextView textView = new TextView(getContext());
-            textView.setText(t);
-            tags.addView(textView);
+            Button button = new Button(getContext());
+            button.setText(t);
+            button.setAllCaps(false);
+            button.setClickable(false);
+//            button.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
+            tags.addView(button);
         }
     }
 }

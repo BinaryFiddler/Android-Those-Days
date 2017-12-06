@@ -111,11 +111,27 @@ public class ActivityFragment extends Fragment {
         });
     }
 
-    @Subscribe
-    public void onEvent(DateChangedEvent event){
-        String date = event.date.getYear() + "-" + (event.date.getMonth() + 1) + "-" + event.date.getDate();
+    @Subscribe(sticky = true)
+    public void onDateChangedSticky(DateChangedEvent event){
+        EventBus.getDefault().removeStickyEvent(event);
+
+        String month = String.format("%02d", event.date.getMonth()+1);
+        String date = month +"/" +event.date.getDate()+ "/" + event.date.getYear();
+
+        Log.d("MICKIE", date);
         getAndRenderListOfActivities(date);
     }
+
+
+//    @Subscribe
+//    public void onEvent(DateChangedEvent event){
+////        String date = event.date.getYear() + "-" + (event.date.getMonth()) + "-" + event.date.getDate();
+//        String month = String.format("%02d", event.date.getMonth()+1);
+//        String date = month +"/" +event.date.getDate()+ "/" + event.date.getYear();
+//
+//        Log.d("MICKIE", date);
+//        getAndRenderListOfActivities(date);
+//    }
 
     @Override
     public void onResume() {
