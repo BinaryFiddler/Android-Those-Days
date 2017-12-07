@@ -22,9 +22,6 @@ public class HumanActivity {
     private String comments;
     private Set<String> photoPaths;
 
-
-
-
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
         this.activityName = activityName;
         this.tags = tags;
@@ -64,9 +61,6 @@ public class HumanActivity {
         lat = "32.881154";
         lon = "-117.235564";
     }
-
-
-
 
     public static ArrayList<HumanActivity> createActivitiesList(int num) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();

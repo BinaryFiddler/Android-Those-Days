@@ -2,6 +2,8 @@ package io.github.huang_chenyu.thosedays;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -45,6 +48,8 @@ public class Algorithm {
     private static final int TIME_INTERVAL = 60;
 
     private static final int SLIDING_WINDOW_SIZE = 10;
+
+    private Context appContext;
 
 //    private static final int[] ACTIVITIES = { 0, 1, 2, 3, 4, 5, 6, 19, 20, 21,
 //                                    22, 23, 24, 25, 26, 27, 28, 29, 33, 34, 35, 36, 37, 38, 39, 44 };
@@ -70,7 +75,6 @@ public class Algorithm {
     private static File ESAFilesDir;
 
     public static void process(Context context) {
-
         try {
 
             ESAFilesDir = getUsersFilesDirectory(context);
@@ -86,7 +90,7 @@ public class Algorithm {
             List<Pair<String, Integer>> rleSchedule = runLength(schedule);
 
             // Convert RLE activities to list of human activities.
-            List<HumanActivity> activities = acts2HumnActs(rleSchedule, files);
+            List<HumanActivity> activities = acts2HumnActs(context, rleSchedule, files);
 
             // TEST CODES, USED TO VALIDATE HUMAN ACTIVITIES.
 //            for(int i = 30; i < 50; i++ ) {
@@ -145,8 +149,7 @@ public class Algorithm {
         return true;
     }
 
-    private static List<HumanActivity> acts2HumnActs (List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
-
+    private static List<HumanActivity> acts2HumnActs (Context context, List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
         // Fetch timestamps.
         List<Integer> timestamps = new ArrayList<>();
         for ( int i = 0; i < files.size(); i++ ) {
@@ -186,13 +189,23 @@ public class Algorithm {
 
             // Get lat and lon
             String lat = "null", lon = "null";
-
+            String location = "";
             try {
                 JSONArray locCoor = files.get(i).getJSONArray("location_lat_long");
 
                 if (!(locCoor == null || locCoor.length() != 2)) {
-                    lat = String.valueOf(locCoor.getDouble(0));
-                    lon = String.valueOf(locCoor.getDouble(1));
+                    double latitude = locCoor.getDouble(0);
+                    double longitude = locCoor.getDouble(1);
+                    lat = String.valueOf(latitude);
+                    lon = String.valueOf(longitude);
+
+                    // Get address from Google API
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(context, Locale.getDefault());
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    location = addresses.get(0).getAddressLine(0);
+                    Log.d(LOG_TAG, location);
                 }
             } catch (JSONException e) {
                 lat = "null";
@@ -221,7 +234,7 @@ public class Algorithm {
 
             }
 
-            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon);
+            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, location);
             res.add(event);
 
             // Update curTime
