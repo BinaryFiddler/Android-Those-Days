@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +46,8 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView activityName;
+        public TextView activityTime;
+        public TextView activityLocation;
         public ImageView activityImage;
 
         // We also create a constructor that accepts the entire item row
@@ -56,6 +59,8 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
 
             activityName = (TextView) itemView.findViewById(R.id.activity_name);
             activityImage = (ImageView) itemView.findViewById(R.id.activity_image);
+            activityTime = (TextView) itemView.findViewById(R.id.activity_time);
+            activityLocation = (TextView) itemView.findViewById(R.id.activity_location);
         }
     }
 
@@ -87,6 +92,14 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         // Set item views based on your views and data model
         TextView textView = viewHolder.activityName;
         textView.setText(humanActivity.getActivityName());
+
+        TextView activityTimeView = viewHolder.activityTime;
+        activityTimeView.setText(humanActivity.getStartTime() + "-" + humanActivity.getEndTime());
+
+        TextView activityLocationView = viewHolder.activityLocation;
+        String location = "Latitude: " + humanActivity.getLat() + "\n" + "Longtitude" + humanActivity.getLon();
+        activityLocationView.setText(location);
+
         ImageView imageView = viewHolder.activityImage;
         imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.images));
     }

@@ -63,8 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="10dp"
-        android:textStyle="bold"
-        android:background="@android:color/holo_blue_light">
+        android:textStyle="bold">
 
     </LinearLayout>
 
