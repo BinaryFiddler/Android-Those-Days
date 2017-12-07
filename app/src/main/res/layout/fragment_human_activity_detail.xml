@@ -14,35 +14,35 @@
             android:id="@+id/activity_image"
             android:src="@drawable/running"
             android:layout_margin="10dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp">
 
             <TextView
                 android:id="@+id/activity_name"
-                android:textSize="20dp"
+                android:textSize="25dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
                 android:text="Running" />
 
             <TextView
                 android:id="@+id/activity_location"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
+                android:textSize="16dp"
                 android:text="La Jolla Cove" />
 
             <TextView
                 android:id="@+id/activity_time"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
+                android:textSize="16dp"
                 android:text="10am - 5pm" />
 
         </LinearLayout>
@@ -54,7 +54,8 @@
         android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:id="@+id/tag_container"
@@ -80,15 +81,17 @@
         android:id="@+id/comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp" />
+        android:background="#EEEEEE"
+        android:padding="5dp"
+        android:layout_margin="10dp" />
 
     <TextView
         android:text="Photos:"
         android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
 
     <Gallery
         android:layout_width="match_parent"
