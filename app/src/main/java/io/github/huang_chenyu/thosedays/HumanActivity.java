@@ -24,7 +24,7 @@ public class HumanActivity {
 
 
 
-    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon, String location) {
 
         this.activityName = activityName;
         this.tags = tags;
@@ -33,6 +33,7 @@ public class HumanActivity {
         this.startTime = startTime;
         this.lat = lat;
         this.lon = lon;
+        this.location = location;
     }
 
     public HumanActivity(){
