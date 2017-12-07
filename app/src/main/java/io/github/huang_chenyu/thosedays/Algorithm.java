@@ -12,9 +12,12 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +39,8 @@ public class Algorithm {
     private static final String USER_REPORTED_LABELS_FILE_SUFFIX = ".user_reported_labels.json";
     private static final String UUID_DIR_PREFIX = "extrasensory.labels.";
     private static final String EXTRASENSORY_PKG_NAME = "edu.ucsd.calab.extrasensory";
+
+    private static final String LAST_TIMESTAMP_FILE_NAME = "last_timestamp";
 
     private static final int TIME_INTERVAL = 60;
 
@@ -70,8 +75,10 @@ public class Algorithm {
 
             ESAFilesDir = getUsersFilesDirectory(context);
 
-            List<JSONObject> files = getLabelFiles(ESAFilesDir);
-
+            List<JSONObject> files = getLabelFiles(context, ESAFilesDir);
+            if (files.isEmpty()) {
+                return;
+            }
 
             List<String> schedule = raw2schedule(files);
 
@@ -347,7 +354,7 @@ public class Algorithm {
     private static List<Pair<String, Integer>> runLength (List<String> acts) {
 
         List<Pair<String, Integer>> res = new ArrayList<>();
-
+        
         String curAct = acts.get(0);
         int idx = 1, cnt = 1;
 
@@ -377,22 +384,55 @@ public class Algorithm {
         return res;
     }
 
-    private static List<JSONObject> getLabelFiles(File filesDir) throws IOException, JSONException{
+    private static List<JSONObject> getLabelFiles(Context context, File filesDir) throws IOException, JSONException{
 
         String[] filenames = filesDir.list();
+        Arrays.sort(filenames);
 
         List<JSONObject> res = new ArrayList<>();
 
-        for (String filename : filenames) {
-            File file = new File(filesDir, filename);
+        // find the last timestamp
+        Integer lastTimestamp = 0;
+        File lastTimestampFile = context.getFileStreamPath(LAST_TIMESTAMP_FILE_NAME);
+        if (lastTimestampFile.exists()) {
+            Log.d(LOG_TAG, "Last timestamp file exists!");
+            // read last timestamp
+            FileInputStream fileIn = context.openFileInput(LAST_TIMESTAMP_FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fileIn);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            String line;
+            if ((line = bufferedReader.readLine()) != null) {
+                lastTimestamp = Integer.parseInt(line);
+            }
+            isr.close();
+            fileIn.close();
+        }
+        else {
+            Log.d(LOG_TAG, "Last timestamp file does NOT exists!");
+        }
+        Log.d(LOG_TAG, "Last timestamp: " + lastTimestamp.toString());
+
+        Integer n = filenames.length;
+        for (int i = 0; i < n; i++) {
+            String timestamp = filenames[i].substring(0, filenames[i].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
+            // discard the old data
+            if (Integer.parseInt(timestamp) <= lastTimestamp)
+                continue;
+
+            File file = new File(filesDir, filenames[i]);
             StringBuilder text = new StringBuilder();
             BufferedReader br = new BufferedReader(new FileReader(file));
-            text.append(br.readLine());
+            text.append(br.readLine()); // because ExtraSensory label files are one-line JSON file
             JSONObject jsonObject = new JSONObject(text.toString());
-            String[] splitFN = filename.split("\\.");
-            jsonObject.put("timestamp",Integer.valueOf(splitFN[0]));
+            jsonObject.put("timestamp", timestamp);
             res.add(jsonObject);
         }
+
+        // update the last timestamp
+        FileOutputStream fileOut = context.openFileOutput(LAST_TIMESTAMP_FILE_NAME , Context.MODE_PRIVATE);
+        String newLastTimestamp = filenames[n - 1].substring(0, filenames[n - 1].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
+        fileOut.write(newLastTimestamp.getBytes());
+        fileOut.close();
 
         return res;
     }
