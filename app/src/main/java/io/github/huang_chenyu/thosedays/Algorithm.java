@@ -2,6 +2,7 @@ package io.github.huang_chenyu.thosedays;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
@@ -22,11 +23,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+
 
 /**
  * Created by Chiao on 2017/11/25.
@@ -41,6 +45,8 @@ public class Algorithm {
     private static final String EXTRASENSORY_PKG_NAME = "edu.ucsd.calab.extrasensory";
 
     private static final String LAST_TIMESTAMP_FILE_NAME = "last_timestamp";
+
+    private static final String PHOTO_PATH = "/DCIM/Camera/";
 
     private static final int TIME_INTERVAL = 60;
 
@@ -69,6 +75,84 @@ public class Algorithm {
 
     private static File ESAFilesDir;
 
+    private static long photoDateToEpochTime(String t) throws Exception {
+
+
+//        Log.d("PhotoDate", t);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        Date date = df.parse(t);
+//        Log.d("Date", date.toString());
+
+        long epoch = date.getTime();
+
+//        Log.d("EPOCH", String.valueOf(epoch));
+
+//        Date date1 = new Date(epoch);
+//        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+//        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+//        timeFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+//        dateFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        // Get date string and startTime string.
+//        String dateStr = dateFormat.format(date1);
+//        String time = timeFormat.format(date1);
+
+//        Log.d("Transformed", dateStr +", "+time);
+
+        return epoch/1000;
+
+    }
+
+    private static List<Pair<Long, String>> readPhotosFileNamseAndTimestamps() {
+
+        try {
+            String memPath = System.getenv("EXTERNAL_STORAGE");
+
+            File dir = new File(memPath + PHOTO_PATH);
+
+            String[] filenames = dir.list();
+
+            List<Pair<Long, String>> timeFilenames = new ArrayList<>();
+
+            for( String fn : filenames) {
+
+                if (fn.toLowerCase().contains(".jpg")) {
+
+                    ExifInterface exifInterface = new ExifInterface(memPath + PHOTO_PATH + fn);
+
+                    String dateTimeStr = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+
+                    if(dateTimeStr.length()>0) {
+
+//                        Log.d("TIME", String.valueOf(photoDateToEpochTime(dateTimeStr)));
+
+                        long epochTime = photoDateToEpochTime(dateTimeStr);
+
+                        Pair tmpPair = new Pair(photoDateToEpochTime(dateTimeStr), memPath + PHOTO_PATH + fn);
+
+                        timeFilenames.add(tmpPair);
+                    }
+                }
+            }
+
+            // Sort with its time.
+            Collections.sort(timeFilenames, new Comparator<Pair<Long, String>>() {
+                @Override
+                public int compare(Pair p1, Pair p2) {
+                    return Long.compare((long)p1.first, (long)p2.first);
+                }
+            });
+
+            return timeFilenames;
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void process(Context context) {
 
         try {
@@ -76,9 +160,13 @@ public class Algorithm {
             ESAFilesDir = getUsersFilesDirectory(context);
 
             List<JSONObject> files = getLabelFiles(context, ESAFilesDir);
-            if (files.isEmpty()) {
-                return;
-            }
+
+
+            // TODO codes below are commented to test photo adding function.
+//            Log.d("PROCESS", String.valueOf(files.size()));
+//            if (files.isEmpty()) {
+//                return;
+//            }
 
             List<String> schedule = raw2schedule(files);
 
@@ -147,7 +235,15 @@ public class Algorithm {
 
     private static List<HumanActivity> acts2HumnActs (List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
 
-        // Fetch timestamps.
+
+        // Fetch the timestamps and filenames of photos :
+         List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamseAndTimestamps();
+
+//        for(Pair pr : timeToPhotoFilepath) {
+//            Log.d("act2Hum", String.valueOf(pr.first) + ", " + pr.second);
+//        }
+
+        // Fetch timestamps of extraSensory data.
         List<Integer> timestamps = new ArrayList<>();
         for ( int i = 0; i < files.size(); i++ ) {
             timestamps.add(files.get(i).getInt("timestamp"));
@@ -155,7 +251,8 @@ public class Algorithm {
 
         long curTime = timestamps.get(0);
 
-        int idx = 0;
+        int idxESD = 0;
+        int idxPhoto = 0;
 
         List<HumanActivity> res = new ArrayList<>();
 
@@ -168,6 +265,7 @@ public class Algorithm {
             int durMin = rleAct.get(i).second;
             long startTime = curTime;
             long endTime = startTime + durMin * 60;
+
 
             //Process from epoch time to date format.
             Date date = new Date(startTime*1000);
@@ -203,11 +301,11 @@ public class Algorithm {
             // Get tags of locations.
             Set<String> tags = new HashSet<>();
 
-            while ( idx < timestamps.size() && timestamps.get(idx) < endTime) {
+            while ( idxESD < timestamps.size() && timestamps.get(idxESD) < endTime) {
 
                 // Read from files.
                 List<Double> probs = new ArrayList<>();
-                JSONArray probArray = files.get(idx).getJSONArray("label_probs");
+                JSONArray probArray = files.get(idxESD).getJSONArray("label_probs");
                 for (int j = 0; j < probArray.length(); j++) {
                     probs.add(probArray.getDouble(j));
                 }
@@ -217,11 +315,31 @@ public class Algorithm {
 
                 tags.add(maxLoc);
 
-                idx += 1;
+                idxESD += 1;
 
             }
 
-            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon);
+            // Get the paths of the related photos
+            Set<String> photoPaths = new HashSet<>();
+            while( idxPhoto < timeToPhotoFilepath.size() && timeToPhotoFilepath.get(idxPhoto).first < endTime) {
+
+                if(timeToPhotoFilepath.get(idxPhoto).first >= startTime) {
+
+                    photoPaths.add(timeToPhotoFilepath.get(idxPhoto).second);
+//                    Log.d("DATE", dateStr);
+//                    Log.d("PHOTOPATH", timeToPhotoFilepath.get(idxPhoto).second);
+
+                }
+                idxPhoto += 1;
+            }
+
+
+            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, photoPaths);
+
+//            if(event.getPhotoPaths().size()!=0) {
+//                Log.d("DateThatHavePhoto", event.getDate());
+//            }
+
             res.add(event);
 
             // Update curTime
@@ -323,7 +441,6 @@ public class Algorithm {
         return maxAct;
     }
 
-    // TODO should be combined with findMaxAct function.
     /**
      * Return the location with the highest probability.
      * @param probs: Probabilities of all the labels.
@@ -392,9 +509,14 @@ public class Algorithm {
         List<JSONObject> res = new ArrayList<>();
 
         // find the last timestamp
+
         Integer lastTimestamp = 0;
+
         File lastTimestampFile = context.getFileStreamPath(LAST_TIMESTAMP_FILE_NAME);
-        if (lastTimestampFile.exists()) {
+
+        //TODO The codes is modified to test photo adding function.
+//        if (lastTimestampFile.exists()) {
+        if (false) {
             Log.d(LOG_TAG, "Last timestamp file exists!");
             // read last timestamp
             FileInputStream fileIn = context.openFileInput(LAST_TIMESTAMP_FILE_NAME);
@@ -440,7 +562,9 @@ public class Algorithm {
     private static File getUsersFilesDirectory(Context context) throws PackageManager.NameNotFoundException {
         // Locate the ESA saved files directory, and the specific minute-example's file:
         Context extraSensoryAppContext = context.createPackageContext(EXTRASENSORY_PKG_NAME, 0);
+
         File esaFilesDir = extraSensoryAppContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+
         if (esaFilesDir == null) {
             Log.e(LOG_TAG, "Cannot find ExtraSensory directory.");
             return null;
@@ -465,5 +589,7 @@ public class Algorithm {
             return userEsaFilesDir;
         }
     }
+
+
 
 }
