@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -32,7 +33,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
     Button saveButton;
     Button cancelButton;
-
+    Button tweetButton;
 
     public HumanActivityDetailFragment(){
 
@@ -64,7 +65,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
         saveButton = rootView.findViewById(R.id.save);
         cancelButton = rootView.findViewById(R.id.cancel);
-
+        tweetButton = rootView.findViewById(R.id.tweet);
 
         setActivityOverview();
 
@@ -87,6 +88,16 @@ public class HumanActivityDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 EventBus.getDefault().post(new ShutDownDetailActivityEvent());
+            }
+        });
+
+        tweetButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                // TODO add images when done
+                TweetComposer.Builder builder = new TweetComposer.Builder(HumanActivityDetailFragment.this.getContext())
+                        .text(activity.getActivityName().substring(0,1).toUpperCase() + activity.getActivityName().substring(1) + " at " + activity.getLocation() + "!");
+                builder.show();
             }
         });
 
