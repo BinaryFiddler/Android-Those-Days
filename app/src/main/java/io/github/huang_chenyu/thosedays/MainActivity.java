@@ -112,17 +112,7 @@ public class MainActivity extends AppCompatActivity {
             activityFragment.setDb(db);
 //        }
 
-        Date date = new Date();
-        int month = Integer.parseInt(event.humanActivity.getDate().substring(0, 2));
-        int day = Integer.parseInt(event.humanActivity.getDate().substring(3, 5));
-        int year = Integer.parseInt(event.humanActivity.getDate().substring(6));
-        date.setYear(year);
-        date.setMonth(month - 1);
-        date.setDate(day);
-        EventBus.getDefault().postSticky(new DateChangedEvent(date));
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
-//        mm/dd/yyyy
 
     }
 
