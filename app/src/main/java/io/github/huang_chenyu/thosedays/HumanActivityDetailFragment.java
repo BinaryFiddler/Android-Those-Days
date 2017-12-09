@@ -21,6 +21,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
     HumanActivity activity;
 
+
     ImageView imageView;
     TextView activityName;
     TextView activityTime;
