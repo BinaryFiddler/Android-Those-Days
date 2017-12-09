@@ -1,8 +1,11 @@
 package io.github.huang_chenyu.thosedays;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 
@@ -31,6 +38,8 @@ public class HumanActivityDetailFragment extends Fragment {
 
     Button saveButton;
     Button cancelButton;
+
+    ImageView myImage;
 
 
     public HumanActivityDetailFragment(){
@@ -60,6 +69,7 @@ public class HumanActivityDetailFragment extends Fragment {
         activityLocation = rootView.findViewById(R.id.activity_location);
         tags = rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
+        myImage = (ImageView) rootView.findViewById(R.id.test_image);
 
         saveButton = rootView.findViewById(R.id.save);
         cancelButton = rootView.findViewById(R.id.cancel);
@@ -69,6 +79,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
         setButtonListeners();
 
+        renderImages();
         return rootView;
     }
 
@@ -107,6 +118,21 @@ public class HumanActivityDetailFragment extends Fragment {
             button.setClickable(false);
 //            button.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
             tags.addView(button);
+        }
+    }
+
+    private void renderImages(){
+        List<String> photos = new LinkedList<>(activity.getPhotoPaths());
+
+        File imgFile = new  File(photos.get(0));
+
+        Log.d("photos path", photos.get(0));
+        if(imgFile.exists()){
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+            myImage.setImageBitmap(myBitmap);
+
         }
     }
 }

@@ -78,7 +78,7 @@ public class Algorithm {
     private static long photoDateToEpochTime(String t) throws Exception {
 
 
-//        Log.d("PhotoDate", t);
+        Log.d("PhotoDate", t);
         SimpleDateFormat df = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         df.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
