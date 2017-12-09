@@ -1,20 +1,21 @@
 package io.github.huang_chenyu.thosedays;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,7 +41,7 @@ public class HumanActivityDetailFragment extends Fragment {
     Button saveButton;
     Button cancelButton;
 
-    ImageView myImage;
+    LinearLayout imageBox;
 
 
     public HumanActivityDetailFragment(){
@@ -70,8 +71,8 @@ public class HumanActivityDetailFragment extends Fragment {
         activityLocation = rootView.findViewById(R.id.activity_location);
         tags = rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
-        myImage = (ImageView) rootView.findViewById(R.id.test_image);
 
+        imageBox = (LinearLayout) rootView.findViewById(R.id.image_box);
         saveButton = rootView.findViewById(R.id.save);
         cancelButton = rootView.findViewById(R.id.cancel);
 
@@ -125,35 +126,47 @@ public class HumanActivityDetailFragment extends Fragment {
     private void renderImages(){
         List<String> photos = new LinkedList<>(activity.getPhotoPaths());
 
-        File imgFile = new  File(photos.get(0));
+        final float scale = getResources().getDisplayMetrics().density;
+        int imgWidth  = (int) (80 * scale);
+        int imgHeight = (int) (80 * scale);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imgWidth, imgHeight);
 
-        Log.d("photos path", photos.get(0));
-        if(imgFile.exists()){
-
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
-            myImage.setImageBitmap(myBitmap);
-
-        }
-    }
-
-    private class LoadImages extends AsyncTask<String, Integer, Void> {
-        protected Void doInBackground(String... paths) {
-            int count = paths.length;
-            long totalSize = 0;
-            File imgFile = new  File(paths[0]);
+        for (final String path: photos){
+            final File imgFile = new  File(path);
             if(imgFile.exists()){
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                myImage.setImageBitmap(myBitmap);
+
+                ImageView imageView = new ImageView(getContext());
+                imageView.setLayoutParams(layoutParams);
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogLayout = inflater.inflate(R.layout.image_dialog, null);
+                        ImageView largeImage  = (ImageView) dialogLayout.findViewById(R.id.large_image);
+                        Picasso.with(getContext())
+                                .load(imgFile)
+                                .into(largeImage);
+                        dialog.setView(dialogLayout);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                        dialog.show();
+                    }
+                });
+
+                imageBox.addView(imageView);
+
+                Picasso.with(getContext())
+                        .load(imgFile)
+                        .into(imageView);
             }
-            return null;
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        protected void onPostExecute(Long result) {
-//            showDialog("Downloaded " + result + " bytes");
         }
     }
 }
