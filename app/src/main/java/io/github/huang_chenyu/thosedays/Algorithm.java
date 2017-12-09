@@ -78,7 +78,7 @@ public class Algorithm {
     private static long photoDateToEpochTime(String t) throws Exception {
 
 
-        Log.d("PhotoDate", t);
+//        Log.d("PhotoDate", t);
         SimpleDateFormat df = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         df.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
@@ -156,6 +156,7 @@ public class Algorithm {
     public static void process(Context context) {
 
         try {
+
 
             ESAFilesDir = getUsersFilesDirectory(context);
 
@@ -321,24 +322,22 @@ public class Algorithm {
 
             // Get the paths of the related photos
             Set<String> photoPaths = new HashSet<>();
+
             while( idxPhoto < timeToPhotoFilepath.size() && timeToPhotoFilepath.get(idxPhoto).first < endTime) {
 
                 if(timeToPhotoFilepath.get(idxPhoto).first >= startTime) {
 
                     photoPaths.add(timeToPhotoFilepath.get(idxPhoto).second);
-//                    Log.d("DATE", dateStr);
-//                    Log.d("PHOTOPATH", timeToPhotoFilepath.get(idxPhoto).second);
-
+                    Log.d("DATE_WIHT_PHOTO", dateStr +", " + startTimeStr);
+                    Log.d("PHOTOPATH", timeToPhotoFilepath.get(idxPhoto).second);
                 }
                 idxPhoto += 1;
             }
 
-
+            if (photoPaths.size() != 0) {
+                Log.d("END", String.valueOf(photoPaths.size()));
+            }
             HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, photoPaths);
-
-//            if(event.getPhotoPaths().size()!=0) {
-//                Log.d("DateThatHavePhoto", event.getDate());
-//            }
 
             res.add(event);
 

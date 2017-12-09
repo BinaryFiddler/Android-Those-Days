@@ -90,7 +90,6 @@ public class Database2 {
         db.execSQL(DATABASE_CREATE);
     }
 
-    //todo implement
     void addEntries(HumanActivity humanActivity){
 
         ContentValues values = new ContentValues();
@@ -117,23 +116,27 @@ public class Database2 {
 
             tagsStr.append(tag);
         }
+
         values.put(COLUMN_TAG, tagsStr.toString());
-
-
         values.put(COLUMN_LOC, humanActivity.getLocation());
         values.put(COLUMN_COMMENT, humanActivity.getComments());
 
+
+
+        String SEPARATOR = ",";
         // There may be multiple photos, thus, need to pre-processed
         StringBuilder photoPaths = new StringBuilder();
         for(String path : humanActivity.getPhotoPaths()) {
-
-            if ( tagsStr.length() != 0)
-                photoPaths.append(",");
-
             photoPaths.append(path);
+            photoPaths.append(SEPARATOR);
         }
 
-        values.put(COLUMN_PHOTO, photoPaths.toString());
+        String photoPath = "";
+        if (photoPaths.length() != 0) {
+            photoPath = photoPaths.toString().substring(0, photoPaths.toString().length() - SEPARATOR.length());
+        }
+
+        values.put(COLUMN_PHOTO, photoPath);
 
         db.insertWithOnConflict(TABLE_COMMENT, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }

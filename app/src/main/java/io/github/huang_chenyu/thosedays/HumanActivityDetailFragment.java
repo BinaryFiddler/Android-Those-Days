@@ -81,7 +81,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
         setButtonListeners();
 
-        renderImages();
+//        renderImages();
         return rootView;
     }
 
@@ -111,7 +111,17 @@ public class HumanActivityDetailFragment extends Fragment {
         activityTime.setText(activity.getDuration());
 
         activityLocation.setText(activity.getLocation());
-        comment.setText(activity.getComments());
+//        comment.setText(activity.getComments());
+        List<String> photoPaths = new LinkedList<>(activity.getPhotoPaths());
+
+        StringBuilder paths = new StringBuilder();
+
+        for (String path : photoPaths){
+            paths.append(path);
+            paths.append(", ");
+        }
+
+        comment.setText(paths.toString());
 
         for (String t:activity.getTags()){
             Button button = new Button(getContext());
@@ -121,6 +131,7 @@ public class HumanActivityDetailFragment extends Fragment {
 //            button.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
             tags.addView(button);
         }
+        renderImages();
     }
 
     private void renderImages(){
@@ -130,6 +141,7 @@ public class HumanActivityDetailFragment extends Fragment {
         int imgWidth  = (int) (80 * scale);
         int imgHeight = (int) (80 * scale);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imgWidth, imgHeight);
+
 
         for (final String path: photos){
             final File imgFile = new  File(path);
