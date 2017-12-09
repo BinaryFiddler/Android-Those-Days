@@ -22,9 +22,6 @@ public class HumanActivity {
     private String comments;
     private Set<String> photoPaths;
 
-
-
-
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
         this.activityName = activityName;
         this.tags = tags;
@@ -34,6 +31,19 @@ public class HumanActivity {
         this.lat = lat;
         this.lon = lon;
         this.location = null;
+        this.comments = null;
+        this.photoPaths = new HashSet<>();
+    }
+
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon, String loc) {
+        this.activityName = activityName;
+        this.tags = tags;
+        this.date = date;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.lat = lat;
+        this.lon = lon;
+        this.location = loc;
         this.comments = null;
         this.photoPaths = new HashSet<>();
     }
@@ -64,9 +74,6 @@ public class HumanActivity {
         lat = "32.881154";
         lon = "-117.235564";
     }
-
-
-
 
     public static ArrayList<HumanActivity> createActivitiesList(int num) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();
