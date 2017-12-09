@@ -111,17 +111,8 @@ public class HumanActivityDetailFragment extends Fragment {
         activityTime.setText(activity.getDuration());
 
         activityLocation.setText(activity.getLocation());
-//        comment.setText(activity.getComments());
-        List<String> photoPaths = new LinkedList<>(activity.getPhotoPaths());
 
-        StringBuilder paths = new StringBuilder();
-
-        for (String path : photoPaths){
-            paths.append(path);
-            paths.append(", ");
-        }
-
-        comment.setText(paths.toString());
+        comment.setText(activity.getComments());
 
         for (String t:activity.getTags()){
             Button button = new Button(getContext());
