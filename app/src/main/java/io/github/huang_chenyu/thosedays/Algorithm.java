@@ -437,8 +437,8 @@ public class Algorithm {
         for (int i = 0; i < n; i++) {
             String timestamp = filenames[i].substring(0, filenames[i].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
             // discard the old data
-            // if (Integer.parseInt(timestamp) <= lastTimestamp)
-            //     continue;
+             if (Integer.parseInt(timestamp) <= lastTimestamp)
+                 continue;
 
             File file = new File(filesDir, filenames[i]);
             StringBuilder text = new StringBuilder();
