@@ -43,4 +43,8 @@ public class MainActivity extends AppCompatActivity {
     public void onEvent(ShutDownDetailActivityEvent event){
         getSupportFragmentManager().beginTransaction().replace(R.id.content, new ActivityFragment()).commit();
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }
