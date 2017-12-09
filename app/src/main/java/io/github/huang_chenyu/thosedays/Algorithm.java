@@ -204,10 +204,15 @@ public class Algorithm {
                     List<Address> addresses;
                     geocoder = new Geocoder(context, Locale.getDefault());
                     addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                    if (addresses.get(0).getFeatureName() != null)
-                        location = addresses.get(0).getFeatureName();
-                    else
-                        location = addresses.get(0).getAddressLine(1);
+                    // location = addresses.get(0).getAddressLine(0);
+                    
+                    String tempFeatureName = addresses.get(0).getFeatureName();
+					if (tempFeatureName != null && !tempFeatureName.matches("\\d+-*\\d*")) {
+						location = tempFeatureName;
+					}
+					else {
+						location = addresses.get(0).getAddressLine(0);
+					}
                     Log.d(LOG_TAG, location);
                 }
             } catch (JSONException e) {
@@ -432,8 +437,8 @@ public class Algorithm {
         for (int i = 0; i < n; i++) {
             String timestamp = filenames[i].substring(0, filenames[i].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
             // discard the old data
-            if (Integer.parseInt(timestamp) <= lastTimestamp)
-                continue;
+            // if (Integer.parseInt(timestamp) <= lastTimestamp)
+            //     continue;
 
             File file = new File(filesDir, filenames[i]);
             StringBuilder text = new StringBuilder();
