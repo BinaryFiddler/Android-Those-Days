@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by chenyu on 11/5/17.
@@ -102,89 +101,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         activityLocationView.setText(location);
 
         ImageView imageView = viewHolder.activityImage;
-        // Set activity icon
-        String name = humanActivity.getActivityName();
-        if (name.equals("Lying down")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.lying_down));
-        }
-        else if (name.equals("Sitting")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.sitting));
-        }
-        else if (name.equals("Walking")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.walking));
-        }
-        else if (name.equals("Running")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.running));
-        }
-        else if (name.equals("Bicycling")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.bicycling));
-        }
-        else if (name.equals("Sleeping")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.sleeping));
-        }
-        else if (name.equals("Lab work")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.lab_work));
-        }
-        else if (name.equals("Exercise")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.exercise));
-        }
-        else if (name.equals("Cooking")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.cooking));
-        }
-        else if (name.equals("Shopping")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.shopping));
-        }
-        else if (name.equals("Strolling")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.strolling));
-        }
-        else if (name.equals("Drinking (alcohol)")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.drinking));
-        }
-        else if (name.equals("Bathing - shower")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.bathing));
-        }
-        else if (name.equals("Cleaning")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.cleaning));
-        }
-        else if (name.equals("Doing laundry")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.doing_laundry));
-        }
-        else if (name.equals("Washing dishes")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.washing_dishes));
-        }
-        else if (name.equals("Watching tv")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.watching_tv));
-        }
-        else if (name.equals("Surfing the internet")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.surfing_internet));
-        }
-        else if (name.equals("Singing")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.singing));
-        }
-        else if (name.equals("Talking")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.talking));
-        }
-        else if (name.equals("Computer work")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.computer_work));
-        }
-        else if (name.equals("Eating")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.eating));
-        }
-        else if (name.equals("Toilet")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.toilet));
-        }
-        else if (name.equals("Grooming")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.grooming));
-        }
-        else if (name.equals("Dressing")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.dressing));
-        }
-        else if (name.equals("Standing")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.standing));
-        }
-        else {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.toilet));
-        }
+        imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.images));
     }
 
     @Override
