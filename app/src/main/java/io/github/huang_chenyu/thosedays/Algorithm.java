@@ -204,7 +204,10 @@ public class Algorithm {
                     List<Address> addresses;
                     geocoder = new Geocoder(context, Locale.getDefault());
                     addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                    location = addresses.get(0).getAddressLine(0);
+                    if (addresses.get(0).getFeatureName() != null)
+                        location = addresses.get(0).getFeatureName();
+                    else
+                        location = addresses.get(0).getAddressLine(1);
                     Log.d(LOG_TAG, location);
                 }
             } catch (JSONException e) {

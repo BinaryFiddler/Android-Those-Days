@@ -35,6 +35,19 @@ public class HumanActivity {
         this.photoPaths = new HashSet<>();
     }
 
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon, String loc) {
+        this.activityName = activityName;
+        this.tags = tags;
+        this.date = date;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.lat = lat;
+        this.lon = lon;
+        this.location = loc;
+        this.comments = null;
+        this.photoPaths = new HashSet<>();
+    }
+
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime,
                          String startTime, String lat, String lon, String loc, String comm, Set<String> photos ) {
         this.activityName = activityName;

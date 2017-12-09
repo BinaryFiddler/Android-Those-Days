@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,9 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Date;
 
 import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
+import java.util.List;
+import java.util.Locale;
+
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             activityFragment.setDb(db);
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, activityFragment).commit();
+        // Algorithm.process(this);
+        // getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
     }
 
     @Override
