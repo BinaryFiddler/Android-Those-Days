@@ -3,6 +3,7 @@ package io.github.huang_chenyu.thosedays;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -133,6 +134,26 @@ public class HumanActivityDetailFragment extends Fragment {
 
             myImage.setImageBitmap(myBitmap);
 
+        }
+    }
+
+    private class LoadImages extends AsyncTask<String, Integer, Void> {
+        protected Void doInBackground(String... paths) {
+            int count = paths.length;
+            long totalSize = 0;
+            File imgFile = new  File(paths[0]);
+            if(imgFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                myImage.setImageBitmap(myBitmap);
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected void onPostExecute(Long result) {
+//            showDialog("Downloaded " + result + " bytes");
         }
     }
 }
