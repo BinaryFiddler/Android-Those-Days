@@ -103,5 +103,20 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
 //        mm/dd/yyyy
 
+        Log.d("chenyu", "cancel?");
+        if (event.humanActivity.getComments() != null){
+            db.updateComment(event.humanActivity);
+        }
+//        if (activityFragment == null){
+            activityFragment = new ActivityFragment();
+            activityFragment.setDb(db);
+//        }
+
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }
