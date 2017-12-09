@@ -25,47 +25,74 @@
 
             <TextView
                 android:id="@+id/activity_name"
+                android:textSize="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:text="Running" />
 
             <TextView
                 android:id="@+id/activity_location"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:text="La Jolla Cove" />
 
             <TextView
                 android:id="@+id/activity_time"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:text="10am - 5pm" />
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <TextView
+        android:text="Tags:"
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
     <LinearLayout
         android:id="@+id/tag_container"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:textStyle="bold">
 
     </LinearLayout>
 
     <TextView
-        android:text="Comment"
+        android:text="Comment:"
+        android:textSize="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp" />
 
     <EditText
         android:id="@+id/comment"
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:text="Photos:"
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
 
     <Gallery
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Gallery>
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"></Gallery>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -94,3 +121,4 @@
     </LinearLayout>
 
 </LinearLayout>
+
