@@ -22,21 +22,10 @@ public class HumanActivity {
     private String comments;
     private Set<String> photoPaths;
 
-//    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
-//        this.activityName = activityName;
-//        this.tags = tags;
-//        this.date = date;
-//        this.endTime = endTime;
-//        this.startTime = startTime;
-//        this.lat = lat;
-//        this.lon = lon;
-//        this.location = null;
-//        this.comments = null;
-//        this.photoPaths = new HashSet<>();
-//    }
 
 
-    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon, Set<String> photoPaths) {
+
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
         this.activityName = activityName;
         this.tags = tags;
         this.date = date;
@@ -46,7 +35,20 @@ public class HumanActivity {
         this.lon = lon;
         this.location = null;
         this.comments = null;
-        this.photoPaths = photoPaths;
+        this.photoPaths = new HashSet<>();
+    }
+
+    public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon, String loc) {
+        this.activityName = activityName;
+        this.tags = tags;
+        this.date = date;
+        this.endTime = endTime;
+        this.startTime = startTime;
+        this.lat = lat;
+        this.lon = lon;
+        this.location = loc;
+        this.comments = null;
+        this.photoPaths = new HashSet<>();
     }
 
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime,
@@ -75,9 +77,6 @@ public class HumanActivity {
         lat = "32.881154";
         lon = "-117.235564";
     }
-
-
-
 
     public static ArrayList<HumanActivity> createActivitiesList(int num) {
         ArrayList<HumanActivity> activities = new ArrayList<HumanActivity>();
@@ -124,7 +123,6 @@ public class HumanActivity {
     public void setComments(String comments) {
         this.comments = comments;
     }
-
     public void printAll() {
         Log.d("HumanActivity", getDate());
         Log.d("HumanActivity", getActivityName() + ", " + getStartTime() + " - " + getEndTime());

@@ -2,6 +2,8 @@ package io.github.huang_chenyu.thosedays;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
@@ -28,6 +30,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -51,6 +54,8 @@ public class Algorithm {
     private static final int TIME_INTERVAL = 60;
 
     private static final int SLIDING_WINDOW_SIZE = 10;
+
+    private Context appContext;
 
 //    private static final int[] ACTIVITIES = { 0, 1, 2, 3, 4, 5, 6, 19, 20, 21,
 //                                    22, 23, 24, 25, 26, 27, 28, 29, 33, 34, 35, 36, 37, 38, 39, 44 };
@@ -157,17 +162,12 @@ public class Algorithm {
 
         try {
 
-
             ESAFilesDir = getUsersFilesDirectory(context);
 
             List<JSONObject> files = getLabelFiles(context, ESAFilesDir);
-
-
-            // TODO codes below are commented to test photo adding function.
-//            Log.d("PROCESS", String.valueOf(files.size()));
-//            if (files.isEmpty()) {
-//                return;
-//            }
+            if (files.isEmpty()) {
+                return;
+            }
 
             List<String> schedule = raw2schedule(files);
 
@@ -175,7 +175,7 @@ public class Algorithm {
             List<Pair<String, Integer>> rleSchedule = runLength(schedule);
 
             // Convert RLE activities to list of human activities.
-            List<HumanActivity> activities = acts2HumnActs(rleSchedule, files);
+            List<HumanActivity> activities = acts2HumnActs(context, rleSchedule, files);
 
             // TEST CODES, USED TO VALIDATE HUMAN ACTIVITIES.
 //            for(int i = 30; i < 50; i++ ) {
@@ -234,17 +234,11 @@ public class Algorithm {
         return true;
     }
 
-    private static List<HumanActivity> acts2HumnActs (List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
-
-
+    private static List<HumanActivity> acts2HumnActs (Context context, List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
         // Fetch the timestamps and filenames of photos :
-         List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamseAndTimestamps();
+        List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamseAndTimestamps();
 
-//        for(Pair pr : timeToPhotoFilepath) {
-//            Log.d("act2Hum", String.valueOf(pr.first) + ", " + pr.second);
-//        }
-
-        // Fetch timestamps of extraSensory data.
+        // Fetch timestamps.
         List<Integer> timestamps = new ArrayList<>();
         for ( int i = 0; i < files.size(); i++ ) {
             timestamps.add(files.get(i).getInt("timestamp"));
@@ -267,7 +261,6 @@ public class Algorithm {
             long startTime = curTime;
             long endTime = startTime + durMin * 60;
 
-
             //Process from epoch time to date format.
             Date date = new Date(startTime*1000);
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -285,13 +278,31 @@ public class Algorithm {
 
             // Get lat and lon
             String lat = "null", lon = "null";
-
+            String location = "";
             try {
                 JSONArray locCoor = files.get(i).getJSONArray("location_lat_long");
 
                 if (!(locCoor == null || locCoor.length() != 2)) {
-                    lat = String.valueOf(locCoor.getDouble(0));
-                    lon = String.valueOf(locCoor.getDouble(1));
+                    double latitude = locCoor.getDouble(0);
+                    double longitude = locCoor.getDouble(1);
+                    lat = String.valueOf(latitude);
+                    lon = String.valueOf(longitude);
+
+                    // Get address from Google API
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(context, Locale.getDefault());
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    // location = addresses.get(0).getAddressLine(0);
+
+                    String tempFeatureName = addresses.get(0).getFeatureName();
+					if (tempFeatureName != null && !tempFeatureName.matches("\\d+-*\\d*")) {
+						location = tempFeatureName;
+					}
+					else {
+						location = addresses.get(0).getAddressLine(0);
+					}
+                    Log.d(LOG_TAG, location);
                 }
             } catch (JSONException e) {
                 lat = "null";
@@ -337,7 +348,7 @@ public class Algorithm {
             if (photoPaths.size() != 0) {
                 Log.d("END", String.valueOf(photoPaths.size()));
             }
-            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, photoPaths);
+            HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, location, "", photoPaths);
 
             res.add(event);
 
@@ -440,6 +451,7 @@ public class Algorithm {
         return maxAct;
     }
 
+    // TODO should be combined with findMaxAct function.
     /**
      * Return the location with the highest probability.
      * @param probs: Probabilities of all the labels.
@@ -508,14 +520,9 @@ public class Algorithm {
         List<JSONObject> res = new ArrayList<>();
 
         // find the last timestamp
-
         Integer lastTimestamp = 0;
-
         File lastTimestampFile = context.getFileStreamPath(LAST_TIMESTAMP_FILE_NAME);
-
-        //TODO The codes is modified to test photo adding function.
-//        if (lastTimestampFile.exists()) {
-        if (false) {
+        if (lastTimestampFile.exists()) {
             Log.d(LOG_TAG, "Last timestamp file exists!");
             // read last timestamp
             FileInputStream fileIn = context.openFileInput(LAST_TIMESTAMP_FILE_NAME);
@@ -537,8 +544,8 @@ public class Algorithm {
         for (int i = 0; i < n; i++) {
             String timestamp = filenames[i].substring(0, filenames[i].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
             // discard the old data
-            if (Integer.parseInt(timestamp) <= lastTimestamp)
-                continue;
+             if (Integer.parseInt(timestamp) <= lastTimestamp)
+                 continue;
 
             File file = new File(filesDir, filenames[i]);
             StringBuilder text = new StringBuilder();
@@ -561,9 +568,7 @@ public class Algorithm {
     private static File getUsersFilesDirectory(Context context) throws PackageManager.NameNotFoundException {
         // Locate the ESA saved files directory, and the specific minute-example's file:
         Context extraSensoryAppContext = context.createPackageContext(EXTRASENSORY_PKG_NAME, 0);
-
         File esaFilesDir = extraSensoryAppContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-
         if (esaFilesDir == null) {
             Log.e(LOG_TAG, "Cannot find ExtraSensory directory.");
             return null;
@@ -588,7 +593,5 @@ public class Algorithm {
             return userEsaFilesDir;
         }
     }
-
-
 
 }

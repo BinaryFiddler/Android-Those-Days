@@ -2,6 +2,7 @@ package io.github.huang_chenyu.thosedays;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +98,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         activityTimeView.setText(humanActivity.getStartTime() + "-" + humanActivity.getEndTime());
 
         TextView activityLocationView = viewHolder.activityLocation;
-        String location = "Latitude: " + humanActivity.getLat() + "\n" + "Longtitude" + humanActivity.getLon();
+        String location = "Location: " + humanActivity.getLocation();
         activityLocationView.setText(location);
 
         ImageView imageView = viewHolder.activityImage;
