@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,6 +27,8 @@ import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 public class MenuFragment extends Fragment {
 
     private Button pickDateButton;
+    private ImageButton refreshButton;
+    private Date lastDate;
     DatePickerDialog datePickerDialog;
 
     public MenuFragment() {
@@ -45,6 +48,7 @@ public class MenuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
 
         pickDateButton = rootView.findViewById(R.id.pick_date_button);
+        refreshButton = rootView.findViewById(R.id.refresh_button);
         setUpButtonListeners();
 
         return rootView;
@@ -55,6 +59,7 @@ public class MenuFragment extends Fragment {
 
         String time = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
         pickDateButton.setText(time);
+        lastDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 //        EventBus.getDefault().post(new DateChangedEvent(new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE))));
 
         datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -62,7 +67,8 @@ public class MenuFragment extends Fragment {
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 String newTime = year + "/" + (monthOfYear + 1) + "/" + dayOfMonth;
                 pickDateButton.setText(newTime);
-                EventBus.getDefault().postSticky(new DateChangedEvent(new Date(year, monthOfYear, dayOfMonth)));
+                lastDate = new Date(year, monthOfYear, dayOfMonth);
+                EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
@@ -71,6 +77,13 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 datePickerDialog.show();
+            }
+        });
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
             }
         });
     }
