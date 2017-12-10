@@ -12,6 +12,14 @@
         android:layout_height="wrap_content">
     </FrameLayout>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"

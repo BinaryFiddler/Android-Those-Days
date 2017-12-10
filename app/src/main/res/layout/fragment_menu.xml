@@ -4,19 +4,9 @@
     android:layout_height="match_parent"
     tools:context="io.github.huang_chenyu.thosedays.MenuFragment">
 
-
     <Button
         android:id="@+id/pick_date_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-
-    <Button
-        android:id="@+id/publish_button"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_publish" />
-
 
 </RelativeLayout>
