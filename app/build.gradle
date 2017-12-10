@@ -33,4 +33,5 @@ dependencies {
     // twitter
     compile 'com.twitter.sdk.android:twitter:3.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.Cutta:TagView:1.3'
 }
