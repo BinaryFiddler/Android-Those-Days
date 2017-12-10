@@ -75,7 +75,6 @@ public class HumanActivityDetailFragment extends Fragment {
         activityTime = rootView.findViewById(R.id.activity_time);
         activityLocation = rootView.findViewById(R.id.activity_location);
         tagsGroup = (TagView)rootView.findViewById(R.id.tag_container);
-//        tags = rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
 
         imageBox = (LinearLayout) rootView.findViewById(R.id.image_box);
@@ -135,6 +134,7 @@ public class HumanActivityDetailFragment extends Fragment {
             }
             Tag tag = new Tag(t);
             tag.layoutColor = getResources().getColor(R.color.colorAccent);
+            tag.layoutColorPress = getResources().getColor(R.color.colorAccent);
             tag.isDeletable = false;
             tag.tagTextSize = 15;
             tag.radius = 15;
