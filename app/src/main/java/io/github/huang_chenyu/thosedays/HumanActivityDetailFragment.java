@@ -1,11 +1,14 @@
 package io.github.huang_chenyu.thosedays;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,7 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
+import com.squareup.picasso.Picasso;
+
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 
@@ -34,6 +43,7 @@ public class HumanActivityDetailFragment extends Fragment {
     Button saveButton;
     Button cancelButton;
     Button tweetButton;
+    LinearLayout imageBox;
 
     public HumanActivityDetailFragment(){
 
@@ -63,6 +73,7 @@ public class HumanActivityDetailFragment extends Fragment {
         tags = rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
 
+        imageBox = (LinearLayout) rootView.findViewById(R.id.image_box);
         saveButton = rootView.findViewById(R.id.save);
         cancelButton = rootView.findViewById(R.id.cancel);
         tweetButton = rootView.findViewById(R.id.tweet);
@@ -110,6 +121,7 @@ public class HumanActivityDetailFragment extends Fragment {
         activityTime.setText(activity.getDuration());
 
         activityLocation.setText(activity.getLocation());
+
         comment.setText(activity.getComments());
 
         for (String t:activity.getTags()){
@@ -119,6 +131,55 @@ public class HumanActivityDetailFragment extends Fragment {
             button.setClickable(false);
 //            button.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
             tags.addView(button);
+        }
+        renderImages();
+    }
+
+    private void renderImages(){
+        List<String> photos = new LinkedList<>(activity.getPhotoPaths());
+
+        final float scale = getResources().getDisplayMetrics().density;
+        int imgWidth  = (int) (80 * scale);
+        int imgHeight = (int) (80 * scale);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imgWidth, imgHeight);
+
+
+        for (final String path: photos){
+            final File imgFile = new  File(path);
+            if(imgFile.exists()){
+
+                ImageView imageView = new ImageView(getContext());
+                imageView.setLayoutParams(layoutParams);
+
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogLayout = inflater.inflate(R.layout.image_dialog, null);
+                        ImageView largeImage  = (ImageView) dialogLayout.findViewById(R.id.large_image);
+                        Picasso.with(getContext())
+                                .load(imgFile)
+                                .into(largeImage);
+                        dialog.setView(dialogLayout);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                        dialog.show();
+                    }
+                });
+
+                imageBox.addView(imageView);
+
+                Picasso.with(getContext())
+                        .load(imgFile)
+                        .into(imageView);
+            }
         }
     }
 }

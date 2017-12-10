@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/activity_image"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_gravity="left"
         android:layout_margin="20dp"
         android:layout_weight="1"/>
