@@ -49,7 +49,8 @@ public class Algorithm {
 
     private static final String LAST_TIMESTAMP_FILE_NAME = "last_timestamp";
 
-    private static final String PHOTO_PATH = "/DCIM/Camera/";
+    // private static final String PHOTO_PATH = "/DCIM/Camera/";
+    private static final String PHOTO_PATH = "/DCIM/100ANDRO/";
 
     private static final int TIME_INTERVAL = 60;
 
@@ -110,7 +111,7 @@ public class Algorithm {
 
     }
 
-    private static List<Pair<Long, String>> readPhotosFileNamseAndTimestamps() {
+    private static List<Pair<Long, String>> readPhotosFileNamesAndTimestamps() {
 
         try {
             String memPath = System.getenv("EXTERNAL_STORAGE");
@@ -236,7 +237,7 @@ public class Algorithm {
 
     private static List<HumanActivity> acts2HumnActs (Context context, List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
         // Fetch the timestamps and filenames of photos :
-        List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamseAndTimestamps();
+        List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamesAndTimestamps();
 
         // Fetch timestamps.
         List<Integer> timestamps = new ArrayList<>();
@@ -544,8 +545,8 @@ public class Algorithm {
         for (int i = 0; i < n; i++) {
             String timestamp = filenames[i].substring(0, filenames[i].lastIndexOf(SERVER_PREDICTIONS_FILE_SUFFIX));
             // discard the old data
-             if (Integer.parseInt(timestamp) <= lastTimestamp)
-                 continue;
+            // if (Integer.parseInt(timestamp) <= lastTimestamp)
+            //     continue;
 
             File file = new File(filesDir, filenames[i]);
             StringBuilder text = new StringBuilder();
