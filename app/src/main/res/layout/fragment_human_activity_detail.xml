@@ -61,16 +61,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp" />
 
-    <LinearLayout
+    <com.cunoraz.tagview.TagView
+        xmlns:tagview="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tag_container"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="10dp"
-        android:padding="10dp"
-        android:textStyle="bold">
-
-    </LinearLayout>
+        tagview:lineMargin="5dp"
+        tagview:tagMargin="5dp"
+        tagview:textPaddingLeft="8dp"
+        tagview:textPaddingTop="5dp"
+        tagview:textPaddingRight="8dp"
+        tagview:textPaddingBottom="5dp" />
 
     <TextView
         android:text="Comment:"

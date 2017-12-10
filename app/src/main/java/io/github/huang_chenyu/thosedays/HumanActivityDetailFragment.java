@@ -3,6 +3,7 @@ package io.github.huang_chenyu.thosedays;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.cunoraz.tagview.Tag;
+import com.cunoraz.tagview.TagView;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import com.squareup.picasso.Picasso;
@@ -21,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,9 +41,8 @@ public class HumanActivityDetailFragment extends Fragment {
     TextView activityTime;
     TextView activityLocation;
 
-    LinearLayout tags;
+    TagView tagsGroup;
     EditText comment;
-
 
     Button saveButton;
     Button cancelButton;
@@ -70,7 +74,8 @@ public class HumanActivityDetailFragment extends Fragment {
         activityName = rootView.findViewById(R.id.activity_name);
         activityTime = rootView.findViewById(R.id.activity_time);
         activityLocation = rootView.findViewById(R.id.activity_location);
-        tags = rootView.findViewById(R.id.tag_container);
+        tagsGroup = (TagView)rootView.findViewById(R.id.tag_container);
+//        tags = rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
 
         imageBox = (LinearLayout) rootView.findViewById(R.id.image_box);
@@ -123,17 +128,20 @@ public class HumanActivityDetailFragment extends Fragment {
 
         comment.setText(activity.getComments());
 
+        ArrayList<Tag> tags = new ArrayList<>();
         for (String t:activity.getTags()){
             if (t == null || t.equals("")){
                 continue;
             }
-            Button button = new Button(getContext());
-            button.setText(t);
-            button.setAllCaps(false);
-            button.setClickable(false);
-//            button.setBackgroundColor(getContext().getResources().getColor(R.color.colorAccent));
-            tags.addView(button);
+            Tag tag = new Tag(t);
+            tag.layoutColor = getResources().getColor(R.color.colorAccent);
+            tag.isDeletable = false;
+            tag.tagTextSize = 15;
+            tag.radius = 15;
+            tags.add(tag);
         }
+        tagsGroup.addTags(tags);
+
         renderImages();
     }
 
