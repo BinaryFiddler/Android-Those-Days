@@ -89,10 +89,16 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp" />
 
-    <Gallery
+    <LinearLayout
+        android:id="@+id/image_box"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"></Gallery>
+        android:layout_height="wrap_content">
+
+
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:orientation="horizontal"

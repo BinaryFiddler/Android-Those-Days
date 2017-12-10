@@ -22,6 +22,9 @@ public class HumanActivity {
     private String comments;
     private Set<String> photoPaths;
 
+
+
+
     public HumanActivity(String activityName, Set<String> tags, String date, String endTime, String startTime, String lat, String lon) {
         this.activityName = activityName;
         this.tags = tags;

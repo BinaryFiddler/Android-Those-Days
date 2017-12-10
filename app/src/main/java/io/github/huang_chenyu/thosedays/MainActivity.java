@@ -34,24 +34,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        READ_EXT_STORAGE);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXT_STORAGE);
             }
+        }else{
+            Algorithm.process(getApplicationContext());
         }
         db = new Database2();
         db.openDB(this);
-        Algorithm.process(getApplicationContext());
         if (activityFragment == null){
             activityFragment = new ActivityFragment();
             activityFragment.setDb(db);
@@ -59,6 +54,29 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, activityFragment).commit();
         // Algorithm.process(this);
         // getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case READ_EXT_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Algorithm.process(getApplicationContext());
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
