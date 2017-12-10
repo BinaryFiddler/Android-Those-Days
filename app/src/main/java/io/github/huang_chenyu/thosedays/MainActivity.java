@@ -2,6 +2,7 @@ package io.github.huang_chenyu.thosedays;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.location.Address;
@@ -9,6 +10,9 @@ import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXT_STORAGE);
             }
         }else{
-            Algorithm.process(getApplicationContext());
+            new RunAlgoTask().execute();
+//            Algorithm.process(getApplicationContext());
         }
         db = new Database2();
         db.openDB(this);
@@ -63,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
             case READ_EXT_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Algorithm.process(getApplicationContext());
+
+                    new RunAlgoTask().execute();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
@@ -120,21 +126,26 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
 //        mm/dd/yyyy
-
-        Log.d("chenyu", "cancel?");
-        if (event.humanActivity.getComments() != null){
-            db.updateComment(event.humanActivity);
-        }
-//        if (activityFragment == null){
-            activityFragment = new ActivityFragment();
-            activityFragment.setDb(db);
-//        }
-
-
-
     }
 
     @Override
     public void onBackPressed() {
     }
-}
+
+    private class RunAlgoTask extends AsyncTask<Void, Integer, Void> {
+        protected void onPreExecute(){
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        protected Void doInBackground(Void... urls) {
+            Algorithm.process(getApplicationContext());
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), "Processing complete!", Toast.LENGTH_SHORT).show();
+        }
+    }}

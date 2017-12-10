@@ -185,7 +185,7 @@ public class Algorithm {
             //TODO: This line maybe removed when we only read new files, but not all.
             // For now, we're reading old data again and again, which makes DB grows badly.
             // Only used for testing in a brand new environment
-            deleteTable(context);
+//            deleteTable(context);
 
             // Dump data (List of Human activities) to DB.
             if(!writeToDB(context, activities)){

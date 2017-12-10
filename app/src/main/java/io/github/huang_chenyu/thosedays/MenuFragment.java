@@ -13,17 +13,19 @@ import android.widget.Button;
 import android.widget.DatePicker;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
+import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
+import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
 
 public class MenuFragment extends Fragment {
 
     private Button pickDateButton;
-    private Button publishButton;
     DatePickerDialog datePickerDialog;
 
     public MenuFragment() {
@@ -43,7 +45,6 @@ public class MenuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
 
         pickDateButton = rootView.findViewById(R.id.pick_date_button);
-        publishButton = rootView.findViewById(R.id.publish_button);
         setUpButtonListeners();
 
         return rootView;
@@ -72,13 +73,28 @@ public class MenuFragment extends Fragment {
                 datePickerDialog.show();
             }
         });
+    }
+
+    @Subscribe
+    public void onEvent(StartDetailActivityEvent event){
+        pickDateButton.setClickable(false);
+    }
+
+    @Subscribe
+    public void onEvent(ShutDownDetailActivityEvent event){
+        pickDateButton.setClickable(true);
+    }
 
 
-        publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
 
-            }
-        });
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 }

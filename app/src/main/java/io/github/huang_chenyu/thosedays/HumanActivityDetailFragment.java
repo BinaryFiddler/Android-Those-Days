@@ -112,7 +112,6 @@ public class HumanActivityDetailFragment extends Fragment {
                 builder.show();
             }
         });
-
     }
 
     private void setActivityOverview() {
@@ -120,11 +119,14 @@ public class HumanActivityDetailFragment extends Fragment {
         activityName.setText(activity.getActivityName());
         activityTime.setText(activity.getDuration());
 
-        activityLocation.setText(activity.getLocation());
+        activityLocation.setText("Location: " + activity.getLocation());
 
         comment.setText(activity.getComments());
 
         for (String t:activity.getTags()){
+            if (t == null || t.equals("")){
+                continue;
+            }
             Button button = new Button(getContext());
             button.setText(t);
             button.setAllCaps(false);
