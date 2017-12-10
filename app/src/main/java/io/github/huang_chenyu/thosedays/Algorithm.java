@@ -278,7 +278,7 @@ public class Algorithm {
 
             // Get lat and lon
             String lat = "null", lon = "null";
-            String location = "";
+            String location = "N/A";
             try {
                 JSONArray locCoor = files.get(i).getJSONArray("location_lat_long");
 
