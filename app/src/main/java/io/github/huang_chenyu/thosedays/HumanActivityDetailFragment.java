@@ -196,7 +196,7 @@ public class HumanActivityDetailFragment extends Fragment {
     private void setActivityIcon(){
         String name = activity.getActivityName();
         if (name.equals("Lying down")) {
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.lying_down));
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.sleeping));
         }
         else if (name.equals("Sitting")) {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.sitting));
@@ -226,7 +226,7 @@ public class HumanActivityDetailFragment extends Fragment {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.shopping));
         }
         else if (name.equals("Strolling")) {
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.strolling));
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.walking));
         }
         else if (name.equals("Drinking (alcohol)")) {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.drinking));

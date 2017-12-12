@@ -56,9 +56,8 @@ public class MainActivity extends AppCompatActivity {
             activityFragment = new ActivityFragment();
             activityFragment.setDb(db);
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, activityFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
         // Algorithm.process(this);
-        // getSupportFragmentManager().beginTransaction().replace(R.id.menu, new MenuFragment()).replace(R.id.content, new ActivityFragment()).commit();
     }
 
     @Override
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(StartDetailActivityEvent event){
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, new HumanActivityDetailFragment(event.activity)).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left).replace(R.id.content, new HumanActivityDetailFragment(event.activity)).commit();
     }
 
     @Subscribe
@@ -110,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
         if (event.humanActivity.getComments() != null){
             db.updateComment(event.humanActivity);
         }
-//        if (activityFragment == null){
+        if (activityFragment == null){
             activityFragment = new ActivityFragment();
             activityFragment.setDb(db);
-//        }
+        }
 
         Date date = new Date();
         int month = Integer.parseInt(event.humanActivity.getDate().substring(0, 2));

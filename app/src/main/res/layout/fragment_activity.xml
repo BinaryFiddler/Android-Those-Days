@@ -1,9 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="io.github.huang_chenyu.thosedays.ActivityFragment">
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_list"
@@ -11,5 +12,44 @@
         android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
 
-    
-</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/refresh_fab"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="170dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFAB2"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:tint="@color/tw__composer_white"
+        android:src="@drawable/refresh" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/calendar_fab"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="100dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="invisible"
+        app:elevation="6dp"
+        app:backgroundTint="@color/colorFAB1"
+        app:pressedTranslationZ="12dp"
+        android:tint="@color/tw__composer_white"
+        android:src="@drawable/calendar" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_margin="20dp"
+        app:elevation="6dp"
+        app:backgroundTint="@color/colorAccent"
+        app:pressedTranslationZ="12dp"
+        app:layout_anchor="@id/activity_list"
+        app:layout_anchorGravity="bottom|end"
+        android:tint="@color/tw__composer_white"
+        android:src="@drawable/add" />
+
+</android.support.design.widget.CoordinatorLayout>
