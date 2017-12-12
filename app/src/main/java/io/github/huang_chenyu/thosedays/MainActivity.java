@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
 import io.github.huang_chenyu.thosedays.events.ProcessingCompleteEvent;
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
+import io.github.huang_chenyu.thosedays.events.TellDetailToShutdownEvent;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onEvent(ShutDownDetailActivityEvent event){
         Log.d("chenyu", "cancel?");
-        if (event.humanActivity.getComments() != null){
+        if (event.humanActivity != null && event.humanActivity.getComments() != null){
             db.updateComment(event.humanActivity);
         }
         if (activityFragment == null){
@@ -121,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (activityFragment != null && activityFragment.isVisible()){
+            super.onBackPressed();
+        }else{
+            EventBus.getDefault().post(new TellDetailToShutdownEvent());
+        }
     }
 
     private class RunAlgoTask extends AsyncTask<Void, Integer, Void> {

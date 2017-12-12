@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cunoraz.tagview.Tag;
@@ -24,15 +24,15 @@ import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
-import org.w3c.dom.Text;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
+import io.github.huang_chenyu.thosedays.events.TellDetailToShutdownEvent;
 
 public class HumanActivityDetailFragment extends Fragment {
 
@@ -75,7 +75,7 @@ public class HumanActivityDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_human_activity_detail, container, false);
 
-        this.container = (LinearLayout) rootView.findViewById(R.id.container);
+        this.container = rootView.findViewById(R.id.container);
 
         imageView = rootView.findViewById(R.id.activity_image);
         activityName = rootView.findViewById(R.id.activity_name);
@@ -287,5 +287,22 @@ public class HumanActivityDetailFragment extends Fragment {
         else if (name.equals("Standing")) {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.standing));
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(TellDetailToShutdownEvent event){
+        EventBus.getDefault().post(new ShutDownDetailActivityEvent(activity));
     }
 }
