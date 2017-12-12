@@ -105,7 +105,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
 
         String name = humanActivity.getActivityName();
         if (name.equals("Lying down")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.lying_down));
+            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.sleeping));
         }
         else if (name.equals("Sitting")) {
             imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.sitting));
@@ -135,7 +135,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
             imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.shopping));
         }
         else if (name.equals("Strolling")) {
-            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.strolling));
+            imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.walking));
         }
         else if (name.equals("Drinking (alcohol)")) {
             imageView.setImageDrawable(adapterContext.getResources().getDrawable(R.drawable.drinking));
