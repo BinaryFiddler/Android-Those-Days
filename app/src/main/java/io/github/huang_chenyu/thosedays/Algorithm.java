@@ -55,7 +55,7 @@ public class Algorithm {
 
     private static final int SLIDING_WINDOW_SIZE = 10;
 
-    private static final int EVENT_MIN_LENGTH = 15;
+    private static final int EVENT_MIN_LENGTH = 0;
 
     private Context appContext;
 
