@@ -2,6 +2,7 @@ package io.github.huang_chenyu.thosedays;
 
 
 import android.app.DatePickerDialog;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
+import io.github.huang_chenyu.thosedays.events.ProcessingCompleteEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
 
@@ -40,9 +46,12 @@ public class ActivityFragment extends Fragment {
     private FloatingActionButton fab;
     private FloatingActionButton calendarFab;
     private FloatingActionButton refreshFab;
+    private TextView dateTextView;
+    private TextView noDataTextView;
     private Date lastDate;
     private DatePickerDialog datePickerDialog;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private ImageView backdrop;
 
 
 
@@ -60,6 +69,9 @@ public class ActivityFragment extends Fragment {
         fab = rootView.findViewById(R.id.fab);
         calendarFab = rootView.findViewById(R.id.calendar_fab);
         refreshFab = rootView.findViewById(R.id.refresh_fab);
+        dateTextView = rootView.findViewById(R.id.date_text_view);
+        noDataTextView = rootView.findViewById(R.id.no_data_textview);
+        backdrop = rootView.findViewById(R.id.main_backdrop);
 
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),R.anim.fab_close);
@@ -71,14 +83,25 @@ public class ActivityFragment extends Fragment {
         //this setting to improve performance if you know that changes in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
+        Calendar calendar = Calendar.getInstance();
+        String time = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
+        lastDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
+        dateTextView.setText(time);
+        setMonthDrawable(new Date());
+
         // Below is the right format for DB queries.
-        getAndRenderListOfActivities();
+//        getAndRenderListOfActivities();
 
         return rootView;
     }
 
+    private void setupFabListeners() {
+        fab.setOnClickListener(fabListener);
+        calendarFab.setOnClickListener(fabListener);
+        refreshFab.setOnClickListener(fabListener);
+    }
 
-    View.OnClickListener fabListener = new View.OnClickListener() {
+    private final View.OnClickListener fabListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             int id = view.getId();
@@ -88,22 +111,15 @@ public class ActivityFragment extends Fragment {
                     break;
                 case R.id.calendar_fab:
                     Calendar calendar = Calendar.getInstance();
-                    String time = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
-                    lastDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
-//        EventBus.getDefault().post(new DateChangedEvent(new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE))));
-
                     datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                            String newTime = year + "/" + (monthOfYear + 1) + "/" + dayOfMonth;
-//                pickDateButton.setText(newTime);
                             lastDate = new Date(year, monthOfYear, dayOfMonth);
                             EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
                         }
                     }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
                     datePickerDialog.show();
-
                     Log.d("Raj", "calendar fab");
                     break;
                 case R.id.refresh_fab:
@@ -137,57 +153,14 @@ public class ActivityFragment extends Fragment {
         }
     }
 
-    private void setupFabListeners() {
-        fab.setOnClickListener(fabListener);
-        calendarFab.setOnClickListener(fabListener);
-        refreshFab.setOnClickListener(fabListener);
-//        Calendar calendar = Calendar.getInstance();
-//
-//        String time = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
-//        lastDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
-////        EventBus.getDefault().post(new DateChangedEvent(new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE))));
-//
-//        datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-//            @Override
-//            public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-//                String newTime = year + "/" + (monthOfYear + 1) + "/" + dayOfMonth;
-////                pickDateButton.setText(newTime);
-//                lastDate = new Date(year, monthOfYear, dayOfMonth);
-//                EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
-//            }
-//        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-//
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                datePickerDialog.show();
-//            }
-//        });
-    }
-
-    private void getAndRenderListOfActivities() {
-        //todo change date to a Date object, and set it to today
-        String date = "2017-12-2";
-        List<HumanActivity> activities = db.queryByDate(date);
-
-        humanActivityListAdapter = new HumanActivityListAdapter(getContext(), activities);
-
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(humanActivityListAdapter);
-
-        humanActivityListAdapter.setOnItemClickListener(new HumanActivityListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                HumanActivity activity = humanActivityListAdapter.getQueue().get(position);
-                EventBus.getDefault().post(new StartDetailActivityEvent(activity));
-            }
-        });
-    }
-
     private void getAndRenderListOfActivities(String date) {
         List<HumanActivity> activities = db.queryByDate(date);
+
+        if (activities == null || activities.isEmpty()){
+            noDataTextView.setVisibility(View.VISIBLE);
+        }else{
+            noDataTextView.setVisibility(View.GONE);
+        }
 
         humanActivityListAdapter = new HumanActivityListAdapter(getContext(), activities);
 
@@ -208,11 +181,18 @@ public class ActivityFragment extends Fragment {
     public void onDateChangedSticky(DateChangedEvent event){
         EventBus.getDefault().removeStickyEvent(event);
 
+        setMonthDrawable(event.date);
         String month = String.format("%02d", event.date.getMonth()+1);
         String date = month +"/" +event.date.getDate()+ "/" + event.date.getYear();
+        dateTextView.setText(date);
 
-        Log.d("MICKIE", date);
         getAndRenderListOfActivities(date);
+    }
+
+    @Subscribe(sticky = true)
+    public void onEvent(ProcessingCompleteEvent event){
+        EventBus.getDefault().removeStickyEvent(event);
+        EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
     }
 
     @Override
@@ -236,4 +216,52 @@ public class ActivityFragment extends Fragment {
     public void setDb(Database2 db) {
         this.db = db;
     }
+
+    private void setMonthDrawable(Date date){
+        int month = date.getMonth();
+        int img = 0;
+        switch (month){
+            case 0:
+                img = R.drawable.january;
+                break;
+            case 1:
+                img = R.drawable.february;
+                break;
+            case 2:
+                img = R.drawable.march;
+                break;
+            case 3:
+                img = R.drawable.april;
+                break;
+            case 4:
+                img = R.drawable.may;
+                break;
+            case 5:
+                img = R.drawable.june;
+                break;
+            case 6:
+                img = R.drawable.july;
+                break;
+            case 7:
+                img = R.drawable.august;
+                break;
+            case 8:
+                img = R.drawable.september;
+                break;
+            case 9:
+                img = R.drawable.october;
+                break;
+            case 10:
+                img = R.drawable.november;
+                break;
+            case 11:
+                img = R.drawable.december;
+                break;
+        }
+        Picasso.with(getContext())
+                .load(img)
+                .fit()
+                .into(backdrop);
+    }
+
 }
