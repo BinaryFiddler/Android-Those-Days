@@ -2,7 +2,6 @@ package io.github.huang_chenyu.thosedays;
 
 
 import android.app.DatePickerDialog;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -87,7 +86,7 @@ public class ActivityFragment extends Fragment {
         String time = calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DATE);
         lastDate = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
         dateTextView.setText(time);
-        setMonthDrawable(new Date());
+        setMonthDrawable(lastDate);
 
         // Below is the right format for DB queries.
 //        getAndRenderListOfActivities();
@@ -110,14 +109,18 @@ public class ActivityFragment extends Fragment {
                     animateFAB();
                     break;
                 case R.id.calendar_fab:
-                    Calendar calendar = Calendar.getInstance();
+                    String dateString = (String) dateTextView.getText();
+                    String[] times = dateString.split("/");
+                    int lastYear = Integer.parseInt(times[2]);
+                    int lastMonth = Integer.parseInt(times[0]) - 1;
+                    int lastDay = Integer.parseInt(times[1]);
+
                     datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                            lastDate = new Date(year, monthOfYear, dayOfMonth);
-                            EventBus.getDefault().postSticky(new DateChangedEvent(lastDate));
+                            EventBus.getDefault().postSticky(new DateChangedEvent(new Date(year, monthOfYear, dayOfMonth)));
                         }
-                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    }, lastYear, lastMonth, lastDay);
 
                     datePickerDialog.show();
                     Log.d("Raj", "calendar fab");
@@ -182,6 +185,7 @@ public class ActivityFragment extends Fragment {
         EventBus.getDefault().removeStickyEvent(event);
 
         setMonthDrawable(event.date);
+        lastDate = event.date;
         String month = String.format("%02d", event.date.getMonth()+1);
         String date = month +"/" +event.date.getDate()+ "/" + event.date.getYear();
         dateTextView.setText(date);
