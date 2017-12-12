@@ -39,6 +39,8 @@ public class HumanActivityDetailFragment extends Fragment {
 
     HumanActivity activity;
 
+    LinearLayout container;
+
     ImageView imageView;
     TextView activityName;
     TextView activityTime;
@@ -73,6 +75,8 @@ public class HumanActivityDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_human_activity_detail, container, false);
+
+        this.container = (LinearLayout) rootView.findViewById(R.id.container);
 
         imageView = rootView.findViewById(R.id.activity_image);
         activityName = rootView.findViewById(R.id.activity_name);
@@ -154,8 +158,10 @@ public class HumanActivityDetailFragment extends Fragment {
         List<String> photos = new LinkedList<>(activity.getPhotoPaths());
 
         if (photos.size() == 0 || photos.get(0).equals("")) {
-            photoSection.setVisibility(View.INVISIBLE);
-            imageBox.setVisibility(View.INVISIBLE);
+            container.removeView(photoSection);
+            container.removeView(imageBox);
+//            photoSection.setVisibility(View.INVISIBLE);
+//            imageBox.setVisibility(View.INVISIBLE);
             return;
         }
 
