@@ -38,7 +38,7 @@ public class HumanActivityDetailFragment extends Fragment {
 
     HumanActivity activity;
 
-    LinearLayout container;
+    RelativeLayout container;
 
     ImageView imageView;
     TextView activityName;
