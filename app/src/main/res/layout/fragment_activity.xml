@@ -111,6 +111,6 @@
         app:layout_anchor="@id/scrollview"
         app:layout_anchorGravity="bottom|end"
         android:tint="@color/tw__composer_white"
-        android:src="@drawable/add" />
+        android:src="@drawable/menu" />
 
 </android.support.design.widget.CoordinatorLayout>
