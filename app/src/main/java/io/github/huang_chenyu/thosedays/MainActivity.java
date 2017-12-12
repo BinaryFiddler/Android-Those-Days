@@ -5,24 +5,18 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.location.Address;
-import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 import java.util.Date;
-
 import io.github.huang_chenyu.thosedays.events.DateChangedEvent;
-import java.util.List;
-import java.util.Locale;
 
+import io.github.huang_chenyu.thosedays.events.ProcessingCompleteEvent;
 import io.github.huang_chenyu.thosedays.events.ShutDownDetailActivityEvent;
 import io.github.huang_chenyu.thosedays.events.StartDetailActivityEvent;
 
@@ -48,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }else{
             new RunAlgoTask().execute();
-//            Algorithm.process(getApplicationContext());
         }
         db = new Database2();
         db.openDB(this);
@@ -57,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             activityFragment.setDb(db);
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
-        // Algorithm.process(this);
     }
 
     @Override
@@ -114,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             activityFragment.setDb(db);
         }
 
+//        mm/dd/yyyy
         Date date = new Date();
         int month = Integer.parseInt(event.humanActivity.getDate().substring(0, 2));
         int day = Integer.parseInt(event.humanActivity.getDate().substring(3, 5));
@@ -123,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
         date.setDate(day);
         EventBus.getDefault().postSticky(new DateChangedEvent(date));
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, activityFragment).commit();
-//        mm/dd/yyyy
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.content, activityFragment).commit();
     }
 
     @Override
@@ -145,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
             progressBar.setVisibility(View.GONE);
+            EventBus.getDefault().postSticky(new ProcessingCompleteEvent());
             Toast.makeText(getApplicationContext(), "Processing complete!", Toast.LENGTH_SHORT).show();
         }
-    }}
+    }
+}
