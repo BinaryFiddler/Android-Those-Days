@@ -11,15 +11,15 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="left"
-        android:layout_margin="10dp" />
+        android:layout_margin="20dp" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="130dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="150dp">
 
         <TextView
             android:id="@+id/activity_name"

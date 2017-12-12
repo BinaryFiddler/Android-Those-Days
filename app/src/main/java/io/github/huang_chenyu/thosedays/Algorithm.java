@@ -49,7 +49,7 @@ public class Algorithm {
 
     private static final String LAST_TIMESTAMP_FILE_NAME = "last_timestamp";
 
-     private static final String PHOTO_PATH = "/DCIM/Camera/";
+    private static final String PHOTO_PATH = "/DCIM/Camera/";
 //    private static final String PHOTO_PATH = "/DCIM/100ANDRO/";
 
     private static final int TIME_INTERVAL = 60;
