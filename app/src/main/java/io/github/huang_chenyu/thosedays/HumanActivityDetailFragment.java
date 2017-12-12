@@ -257,7 +257,7 @@ public class HumanActivityDetailFragment extends Fragment {
         else if (name.equals("Washing dishes")) {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.washing_dishes));
         }
-        else if (name.equals("Watching tv")) {
+        else if (name.equals("Watching TV")) {
             imageView.setImageDrawable(getResources().getDrawable(R.drawable.watching_tv));
         }
         else if (name.equals("Surfing the internet")) {
