@@ -58,6 +58,8 @@ public class Algorithm {
 
     private static final int EVENT_MIN_LENGTH = 0;
 
+    private static final double TAG_THRESHOLD_PROB = 0.7;
+
     private Context appContext;
 
 //    private static final int[] ACTIVITIES = { 0, 1, 2, 3, 4, 5, 6, 19, 20, 21,
@@ -237,6 +239,26 @@ public class Algorithm {
         return true;
     }
 
+    private static Set<String> findTags(List<Double> probs) {
+
+        Set<String> tags = new HashSet<>();
+
+        for( int i = 0; i < probs.size(); i++ ) {
+            if(catOfAct[i] == 3){
+                // These are activities.
+
+            } else if (catOfAct[i] == 2) {
+                // Labels about locations.
+                if( probs.get(i) > TAG_THRESHOLD_PROB ) {
+                    tags.add(label2Act[i]);
+                }
+            } else {
+                // Labels we don't need.
+            }
+        }
+        return tags;
+    }
+
     private static List<HumanActivity> acts2HumnActs (Context context, List<Pair<String, Integer>> rleAct, List<JSONObject> files) throws IOException, JSONException{
         // Fetch the timestamps and filenames of photos :
         List<Pair<Long, String>> timeToPhotoFilepath = readPhotosFileNamesAndTimestamps();
@@ -326,9 +348,12 @@ public class Algorithm {
                 }
 
                 // Get the location which has the highest prob
-                String maxLoc = label2Act[findMaxLoc(probs)];
-
-                tags.add(maxLoc);
+//                Pair<Integer, Double> locRes = findMaxLoc(probs);
+//                if(locRes.second > 0.7) {
+//                    String maxLoc = label2Act[locRes.first];
+//                    tags.add(maxLoc);
+//                }
+                tags.addAll(findTags(probs));
 
                 idxESD += 1;
 
@@ -364,9 +389,7 @@ public class Algorithm {
             // Update curTime
             curTime  = endTime;
         }
-
         return res;
-
     }
 
     /**
@@ -466,7 +489,7 @@ public class Algorithm {
      * @param probs: Probabilities of all the labels.
      * @return int: Index of the location with the highest prob.
      */
-    private static int findMaxLoc(List<Double> probs) {
+    private static Pair<Integer, Double> findMaxLoc(List<Double> probs) {
 
         int maxLoc = 7;
         double maxProb = 0;
@@ -485,7 +508,7 @@ public class Algorithm {
                 // Labels we don't need.
             }
         }
-        return maxLoc;
+        return new Pair<>(maxLoc, maxProb);
     }
 
     private static List<Pair<String, Integer>> runLength (List<String> acts) {
