@@ -6,12 +6,14 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,9 +25,11 @@ import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,18 +39,18 @@ public class HumanActivityDetailFragment extends Fragment {
 
     HumanActivity activity;
 
-
     ImageView imageView;
     TextView activityName;
     TextView activityTime;
     TextView activityLocation;
+    TextView photoSection;
 
     TagView tagsGroup;
     EditText comment;
 
     Button saveButton;
     Button cancelButton;
-    Button tweetButton;
+    ImageButton tweetButton;
     LinearLayout imageBox;
 
     public HumanActivityDetailFragment(){
@@ -74,6 +78,8 @@ public class HumanActivityDetailFragment extends Fragment {
         activityName = rootView.findViewById(R.id.activity_name);
         activityTime = rootView.findViewById(R.id.activity_time);
         activityLocation = rootView.findViewById(R.id.activity_location);
+        photoSection = (TextView) rootView.findViewById(R.id.photo_section);
+
         tagsGroup = (TagView)rootView.findViewById(R.id.tag_container);
         comment = rootView.findViewById(R.id.comment);
 
@@ -121,9 +127,8 @@ public class HumanActivityDetailFragment extends Fragment {
     private void setActivityOverview() {
         setActivityIcon();
         activityName.setText(activity.getActivityName());
-        activityTime.setText(activity.getDuration());
-
-        activityLocation.setText("Location: " + activity.getLocation());
+        activityLocation.setText(activity.getLocation());
+        activityTime.setText(activity.getDate() + " " + activity.getDuration());
 
         comment.setText(activity.getComments());
 
@@ -148,16 +153,20 @@ public class HumanActivityDetailFragment extends Fragment {
     private void renderImages(){
         List<String> photos = new LinkedList<>(activity.getPhotoPaths());
 
+        if (photos.size() == 0 || photos.get(0).equals("")) {
+            photoSection.setVisibility(View.INVISIBLE);
+            imageBox.setVisibility(View.INVISIBLE);
+            return;
+        }
+
         final float scale = getResources().getDisplayMetrics().density;
         int imgWidth  = (int) (80 * scale);
         int imgHeight = (int) (80 * scale);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imgWidth, imgHeight);
 
-
         for (final String path: photos){
             final File imgFile = new  File(path);
             if(imgFile.exists()){
-
                 ImageView imageView = new ImageView(getContext());
                 imageView.setLayoutParams(layoutParams);
 
