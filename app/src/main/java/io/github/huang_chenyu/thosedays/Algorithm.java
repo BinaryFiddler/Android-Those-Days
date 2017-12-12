@@ -55,6 +55,8 @@ public class Algorithm {
 
     private static final int SLIDING_WINDOW_SIZE = 10;
 
+    private static final int EVENT_MIN_LENGTH = 15;
+
     private Context appContext;
 
 //    private static final int[] ACTIVITIES = { 0, 1, 2, 3, 4, 5, 6, 19, 20, 21,
@@ -348,9 +350,15 @@ public class Algorithm {
             if (photoPaths.size() != 0) {
                 Log.d("END", String.valueOf(photoPaths.size()));
             }
+
+
             HumanActivity event = new HumanActivity(actName, tags, dateStr, endTimeStr, startTimeStr, lat, lon, location, "", photoPaths);
 
-            res.add(event);
+            if (durMin > EVENT_MIN_LENGTH) {
+
+                res.add(event);
+
+            }
 
             // Update curTime
             curTime  = endTime;
@@ -522,6 +530,7 @@ public class Algorithm {
         // find the last timestamp
         Integer lastTimestamp = 0;
         File lastTimestampFile = context.getFileStreamPath(LAST_TIMESTAMP_FILE_NAME);
+
         if (lastTimestampFile.exists()) {
             Log.d(LOG_TAG, "Last timestamp file exists!");
             // read last timestamp
