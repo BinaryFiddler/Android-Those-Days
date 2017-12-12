@@ -26,29 +26,25 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp" >
 
             <TextView
                 android:id="@+id/activity_name"
-                android:textSize="20dp"
+                android:textSize="22dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:text="Running" />
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/activity_location"
+                android:textSize="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:text="La Jolla Cove" />
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/activity_time"
+                android:textSize="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:text="10am - 5pm" />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
@@ -56,7 +52,7 @@
 
     <TextView
         android:text="Tags:"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp" />
@@ -66,7 +62,8 @@
         android:id="@+id/tag_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         tagview:lineMargin="5dp"
         tagview:tagMargin="5dp"
         tagview:textPaddingLeft="8dp"
@@ -76,22 +73,24 @@
 
     <TextView
         android:text="Comment:"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <EditText
         android:id="@+id/comment"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:text="Photos:"
-        android:textSize="20dp"
+        android:id="@+id/photo_section"
+        android:textSize="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp" />
@@ -100,17 +99,45 @@
         android:id="@+id/image_box"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
     </LinearLayout>
 
+    <TextView
+        android:text="Share:"
+        android:textSize="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp" >
+
+        <ImageButton
+            android:id="@+id/tweet"
+            android:layout_alignParentLeft="true"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/twitter"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
 
         <Button
             android:text="Save"
@@ -122,12 +149,6 @@
         <Button
             android:text="Cancel"
             android:id="@+id/cancel"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
-        <Button
-            android:text="Tweet"
-            android:id="@+id/tweet"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />

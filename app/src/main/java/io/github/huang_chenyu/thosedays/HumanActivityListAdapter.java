@@ -98,7 +98,7 @@ public class HumanActivityListAdapter extends RecyclerView.Adapter<HumanActivity
         activityTimeView.setText(humanActivity.getStartTime() + "-" + humanActivity.getEndTime());
 
         TextView activityLocationView = viewHolder.activityLocation;
-        String location = "Location: " + humanActivity.getLocation();
+        String location = humanActivity.getLocation();
         activityLocationView.setText(location);
 
         ImageView imageView = viewHolder.activityImage;
