@@ -41,7 +41,8 @@
                     <TextView
                         android:id="@+id/activity_name"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="22dp"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
@@ -64,7 +65,9 @@
             <TextView
                 android:id="@+id/tag_section"
                 android:text="Tags:"
-                android:textSize="15dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@id/title_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +91,9 @@
             <TextView
                 android:id="@+id/comment_section"
                 android:text="Comment:"
-                android:textSize="15dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@id/tag_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,6 +106,8 @@
                 android:background="@drawable/edittext_modified_states"
                 android:layout_below="@id/comment_section"
                 android:layout_width="match_parent"
+                android:gravity="top"
+                android:minHeight="100dp"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_marginLeft="10dp"
@@ -110,7 +117,9 @@
                 android:text="Photos:"
                 android:id="@+id/photo_section"
                 android:layout_below="@id/comment"
-                android:textSize="15dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp" />
@@ -128,7 +137,9 @@
             <TextView
                 android:id="@+id/share_section"
                 android:text="Share:"
-                android:textSize="15dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@id/image_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -147,8 +158,8 @@
                 <ImageButton
                     android:id="@+id/tweet"
                     android:layout_alignParentLeft="true"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:src="@drawable/twitter"
@@ -164,14 +175,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_alignParentBottom="true" >
 
         <Button
             android:text="Save"
             android:id="@+id/save"
             android:layout_weight="1"
+            android:theme="@style/PrimaryFlatButton"
+            android:background="#80CBC4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" />
@@ -180,6 +191,8 @@
             android:text="Cancel"
             android:id="@+id/cancel"
             android:layout_weight="1"
+            android:theme="@style/PrimaryFlatButton"
+            android:background="#EF9A9A"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" />

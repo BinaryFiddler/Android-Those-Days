@@ -157,10 +157,8 @@ public class HumanActivityDetailFragment extends Fragment {
         List<String> photos = new LinkedList<>(activity.getPhotoPaths());
 
         if (photos.size() == 0 || photos.get(0).equals("")) {
-            container.removeView(photoSection);
-            container.removeView(imageBox);
-//            photoSection.setVisibility(View.INVISIBLE);
-//            imageBox.setVisibility(View.INVISIBLE);
+            photoSection.setVisibility(View.GONE);
+            imageBox.setVisibility(View.GONE);
             return;
         }
 
